@@ -210,15 +210,11 @@ connections to strictification and coherence theorems,
 
 decision procedures beyond the free model (where undecidability appears).
 
-
-
-Citation
-If you use this code, please cite the accompanying paper:
-
+This paper cites the preprint:
 Equational Reasoning in ∞-Categories
-(LICS 2026)
+by Anonymous authors
 
-Author
+Author of Agda Code
 Jack Widman
 PhD in Mathematics — Topology, Type Theory, and Higher Categories
 Reasearch Fellow at Ben Gurion University, Department of Computer SCience
