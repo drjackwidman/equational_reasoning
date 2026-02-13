@@ -114,15 +114,7 @@ This duality allows one to derive symbolic equations in the strict mode and inte
 
 ---
 
-## Requirements
 
-- Agda (recent version recommended)
-- Standard library compatible with the codebase
-
-To type-check the core file:
-
-```bash
-agda FreeKernel.agda
 
 
 ## Research Context
