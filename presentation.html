@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Two Conjectures on EqCat∞</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 60px 100px;
+    text-align: center;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  h1 {
+    font-size: 2.8em;
+    color: #e94560;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: 2.2em;
+    color: #e94560;
+    margin-bottom: 30px;
+  }
+
+  .subtitle {
+    font-size: 1.3em;
+    color: #a0a0c0;
+    margin-bottom: 15px;
+    font-style: italic;
+  }
+
+  p, li {
+    font-size: 1.25em;
+    line-height: 1.7;
+    color: #d0d0e0;
+  }
+
+  .content {
+    max-width: 1000px;
+    text-align: left;
+  }
+
+  .content p {
+    margin-bottom: 20px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  ul li {
+    padding: 10px 0 10px 30px;
+    position: relative;
+  }
+
+  ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 18px;
+    width: 12px;
+    height: 12px;
+    background: #e94560;
+    border-radius: 50%;
+  }
+
+  .axiom-box {
+    background: #16213e;
+    border-left: 4px solid #e94560;
+    padding: 25px 35px;
+    margin: 25px 0;
+    border-radius: 0 8px 8px 0;
+    text-align: left;
+    font-size: 1.15em;
+    line-height: 1.8;
+  }
+
+  .conjecture-box {
+    background: #16213e;
+    border: 2px solid #e94560;
+    padding: 35px 45px;
+    margin: 30px 0;
+    border-radius: 12px;
+    text-align: left;
+  }
+
+  .conjecture-box h3 {
+    color: #e94560;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+  }
+
+  .conjecture-box p {
+    font-size: 1.2em;
+  }
+
+  .tower-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+
+  .tower-table th {
+    background: #e94560;
+    color: white;
+    padding: 12px 20px;
+    text-align: left;
+    font-size: 1.1em;
+  }
+
+  .tower-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid #2a2a4e;
+    font-size: 1.05em;
+  }
+
+  .tower-table tr:nth-child(even) {
+    background: #16213e;
+  }
+
+  .tower-table tr:nth-child(odd) {
+    background: #1a1a2e;
+  }
+
+  .evidence-for {
+    border-left: 4px solid #4ecca3;
+  }
+
+  .evidence-for li::before {
+    background: #4ecca3;
+  }
+
+  .evidence-against {
+    border-left: 4px solid #e94560;
+  }
+
+  .nav {
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    z-index: 100;
+  }
+
+  .nav button {
+    background: #e94560;
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    font-size: 1.1em;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Georgia', serif;
+    transition: background 0.2s;
+  }
+
+  .nav button:hover {
+    background: #c73650;
+  }
+
+  .nav button:disabled {
+    background: #444;
+    cursor: not-allowed;
+  }
+
+  .slide-counter {
+    color: #a0a0c0;
+    font-size: 1.1em;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    text-align: left;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .col-header {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid;
+  }
+
+  .col-for .col-header {
+    color: #4ecca3;
+    border-color: #4ecca3;
+  }
+
+  .col-against .col-header {
+    color: #e94560;
+    border-color: #e94560;
+  }
+
+  .col-for li::before { background: #4ecca3; }
+  .col-against li::before { background: #e94560; }
+
+  .highlight {
+    color: #e94560;
+    font-weight: bold;
+  }
+
+  .green {
+    color: #4ecca3;
+  }
+
+  .diagram {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1em;
+    background: #16213e;
+    padding: 25px 35px;
+    border-radius: 8px;
+    margin: 20px 0;
+    line-height: 1.6;
+    white-space: pre;
+    text-align: center;
+  }
+
+  .small-note {
+    font-size: 0.9em;
+    color: #888;
+    margin-top: 30px;
+    font-style: italic;
+  }
+
+  .step-box {
+    background: #16213e;
+    padding: 20px 30px;
+    border-radius: 8px;
+    margin: 12px 0;
+    text-align: left;
+    font-size: 1.1em;
+    line-height: 1.6;
+  }
+
+  .step-label {
+    color: #e94560;
+    font-weight: bold;
+    font-size: 1.15em;
+  }
+
+  em { color: #a0a0c0; }
+</style>
+</head>
+<body>
+
+<!-- Slide 1: Title -->
+<div class="slide active" id="slide-1">
+  <h1>Two Conjectures on EqCat&infin;</h1>
+  <p class="subtitle">Open questions about equational reasoning in higher categories</p>
+  <div style="margin-top: 40px;">
+    <div class="step-box" style="max-width: 800px; margin: 15px auto;">
+      <strong>Conjecture 1:</strong> Weak Adequacy &mdash; Do the axioms characterize (&infin;,1)-categories?
+    </div>
+    <div class="step-box" style="max-width: 800px; margin: 15px auto;">
+      <strong>Conjecture 2:</strong> Eff Model &mdash; Does the effective topos support an internal &infin;-category?
+    </div>
+  </div>
+  <div style="margin-top: 40px;">
+    <p style="font-size: 1.1em; color: #888;">
+      Based on "Equational Reasoning in &infin;-Categories"<br>
+      (Anonymous, LICS '26)
+    </p>
+  </div>
+</div>
+
+<!-- Slide 2: Background -->
+<div class="slide" id="slide-2">
+  <h2>Background: The Theory EqCat&infin;</h2>
+  <div class="content">
+    <p>
+      EqCat&infin; is a compact, typed equational theory for &infin;-categories.
+      Its language has:
+    </p>
+    <ul>
+      <li><span class="highlight">n-cells</span> at every dimension n &ge; 0</li>
+      <li><span class="highlight">src, tgt</span> &mdash; source and target operators (dimension n+1 &rarr; n)</li>
+      <li><span class="highlight">id</span> &mdash; identity operator (dimension n &rarr; n+1)</li>
+      <li><span class="highlight">&circ;<sub>k</sub></span> &mdash; composition through a shared k-dimensional boundary</li>
+    </ul>
+    <p style="margin-top: 25px;">
+      The axioms IC1&ndash;IC13 encode globularity, typing of composition,
+      associativity, exchange, unit laws, and the interaction of identity
+      with composition.
+    </p>
+  </div>
+</div>
+
+<!-- Slide 3: The Axioms -->
+<div class="slide" id="slide-3">
+  <h2>The 13 Axioms (IC1&ndash;IC13)</h2>
+  <div class="content">
+    <div class="axiom-box">
+      <strong>Globularity:</strong> IC1&ndash;IC2 &mdash; src and tgt compose correctly across dimensions<br><br>
+      <strong>Identity typing:</strong> IC3&ndash;IC4 &mdash; src(id a) = a, tgt(id a) = a<br><br>
+      <strong>Composition typing:</strong> IC5&ndash;IC8 &mdash; src and tgt of compositions<br><br>
+      <strong>Associativity:</strong> IC9 &mdash; (z &circ;<sub>k</sub> y) &circ;<sub>k</sub> x = z &circ;<sub>k</sub> (y &circ;<sub>k</sub> x)<br><br>
+      <strong>Exchange:</strong> IC10 &mdash; two composition operators at different levels interchange<br><br>
+      <strong>Unit laws:</strong> IC11&ndash;IC12 &mdash; composing with an identity gives back the original cell<br><br>
+      <strong>Id &amp; composition:</strong> IC13 &mdash; id(y &circ;<sub>k</sub> x) = id y &circ;<sub>k+1</sub> id x
+    </div>
+    <p class="small-note">These 13 axioms are the entire theory. Everything else must follow from them.</p>
+  </div>
+</div>
+
+<!-- Slide 4: Strong Adequacy -->
+<div class="slide" id="slide-4">
+  <h2>What Is Already Proved</h2>
+  <div class="content">
+    <div class="conjecture-box">
+      <h3>Theorem 6.1 &mdash; Strong Adequacy</h3>
+      <p>Under the <span class="highlight">strong reading</span>, where every equation is a literal identity,
+        the models of EqCat&infin; are <span class="green">exactly</span> the strict &omega;-categories.</p>
+      <p style="margin-top: 10px;">Both directions are proved. The axioms are complete.</p>
+    </div>
+    <p>
+      Additionally, the paper constructs a <span class="green">homotopy model</span> (Section 7)
+      and proves <span class="green">soundness</span> (Section 8): (&infin;,1)-categories
+      satisfy the axioms under the weak reading.
+    </p>
+    <p style="margin-top: 15px;">
+      <span class="highlight">What is missing:</span> the converse for the weak reading.
+      Does satisfying the axioms weakly <em>suffice</em> to be an (&infin;,1)-category?
+    </p>
+  </div>
+</div>
+
+<!-- Slide 5: The Weak Reading -->
+<div class="slide" id="slide-5">
+  <h2>The Weak Reading</h2>
+  <div class="content">
+    <p>In the <span class="highlight">strong reading</span>, an equation a = b between n-cells means:</p>
+    <div class="step-box">a and b are the same n-cell. Literally identical.</div>
+
+    <p>In the <span class="highlight">weak reading</span>, an equation a = b between n-cells means:</p>
+    <div class="step-box">
+      There exists an <span class="green">(n+1)-dimensional cell</span> &phi; connecting a to b.<br>
+      The equation holds <em>up to a witness one dimension higher</em>.
+    </div>
+
+    <p style="margin-top: 20px;">
+      The witness &phi; is itself a cell, and <em>its</em> equations with other cells
+      are witnessed by (n+2)-cells, and so on &mdash; witnesses all the way up.
+    </p>
+  </div>
+</div>
+
+<!-- Slide 6: (∞,1)-categories -->
+<div class="slide" id="slide-6">
+  <h2>What Is an (&infin;,1)-Category?</h2>
+  <div class="content">
+    <p>An <span class="highlight">(&infin;,1)-category</span> is an &infin;-category where:</p>
+    <ul>
+      <li><strong>0-cells</strong> (objects) &mdash; no invertibility requirement</li>
+      <li><strong>1-cells</strong> (morphisms) &mdash; no invertibility requirement</li>
+      <li><strong>2-cells and above</strong> &mdash; all <span class="green">invertible</span></li>
+    </ul>
+    <p style="margin-top: 25px;">
+      Intuition from topology: given a space X, paths (1-cells) have a direction,
+      but homotopies between paths (2-cells) and all higher structure are
+      always reversible.
+    </p>
+    <p style="margin-top: 15px;">
+      Standard models include quasicategories (Joyal/Lurie), complete Segal
+      spaces (Rezk), and Segal categories &mdash; all known to be equivalent.
+    </p>
+  </div>
+</div>
+
+<!-- Slide 7: The Conjecture -->
+<div class="slide" id="slide-7">
+  <h2>The Weak Adequacy Conjecture</h2>
+  <div class="content">
+    <div class="conjecture-box">
+      <h3>Conjecture</h3>
+      <p>
+        Consider the EqCat&infin; axioms augmented with the requirement that all cells
+        of dimension &ge; 2 are invertible. Under the weak reading &mdash; where an
+        equation between n-dimensional terms is witnessed by an (n+1)-dimensional
+        cell rather than being a strict identity &mdash; the models of this theory are
+        <span class="highlight">exactly</span> the (&infin;,1)-categories.
+      </p>
+    </div>
+    <p>This requires proving <strong>two directions</strong>:</p>
+    <div class="step-box">
+      <span class="step-label">Soundness:</span> Every (&infin;,1)-category satisfies the axioms.
+      <span class="green">(Largely done &mdash; Sections 7 &amp; 8 of the paper.)</span>
+    </div>
+    <div class="step-box">
+      <span class="step-label">Completeness:</span> Every model satisfying the axioms is an (&infin;,1)-category.
+      <span class="highlight">(Open.)</span>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: The Coherence Tower -->
+<div class="slide" id="slide-8">
+  <h2>The Central Difficulty: The Coherence Tower</h2>
+  <div class="content">
+    <p>An (&infin;,1)-category requires an infinite tower of coherence data:</p>
+    <table class="tower-table">
+      <tr><th>Level</th><th>What lives here</th><th>Example</th></tr>
+      <tr>
+        <td>0</td>
+        <td>Operations</td>
+        <td>Composition, identity, src, tgt</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>Witnesses that axioms hold</td>
+        <td>Associator: (h&circ;g)&circ;f &cong; h&circ;(g&circ;f)</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Coherences between witnesses</td>
+        <td>Pentagonator for 4-fold composition</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Coherences between coherences</td>
+        <td>Higher associahedron data</td>
+      </tr>
+      <tr>
+        <td>n</td>
+        <td>Coherences between level-(n&minus;1)</td>
+        <td>&hellip;and so on, forever</td>
+      </tr>
+    </table>
+    <p style="margin-top: 15px;">
+      IC1&ndash;IC13 give you levels 0 and 1 directly.
+      The conjecture claims levels 2, 3, 4, &hellip; are
+      <span class="highlight">generated automatically</span> by the weak reading.
+    </p>
+  </div>
+</div>
+
+<!-- Slide 9: Why the tower might be generated -->
+<div class="slide" id="slide-9">
+  <h2>Why the Tower Might Be Automatic</h2>
+  <div class="content">
+    <p>
+      The key idea: the axioms apply <em>at every dimension</em>.
+    </p>
+    <p>
+      IC9 says composition is associative. Under the weak reading, this gives
+      an associator (a 2-cell). But the associator is itself a cell, and IC9
+      applies to <em>it</em> too, potentially generating the pentagonator (a 3-cell).
+    </p>
+    <div class="step-box">
+      <span class="step-label">Level 1:</span> IC9 applied to f, g, h gives associator &alpha;<br>
+      <span class="step-label">Level 2:</span> IC9 applied to associators gives pentagonator &pi;<br>
+      <span class="step-label">Level 3:</span> IC9 applied to pentagonators gives the next coherence<br>
+      <span class="step-label">Level n:</span> Each level arises from applying the axioms to the previous level's witnesses
+    </div>
+    <p style="margin-top: 20px;">
+      If this bootstrapping works, then 13 finitely-stated axioms generate
+      the full infinite tower &mdash; a striking case of
+      <span class="green">finite presentation of infinite coherence</span>.
+    </p>
+  </div>
+</div>
+
+<!-- Slide 10: Evidence For -->
+<div class="slide" id="slide-10">
+  <h2>Evidence For the Conjecture</h2>
+  <div class="content">
+    <ul class="evidence-for">
+      <li>
+        <strong>Strong adequacy works.</strong>
+        The same 13 axioms, read strictly, characterize strict &omega;-categories
+        exactly (Theorem 6.1). The axioms are the "right" axioms &mdash; they
+        capture all the structural laws.
+      </li>
+      <li>
+        <strong>The homotopy model validates soundness.</strong>
+        A natural class of (&infin;,1)-categories (boundary-preserving homotopies
+        on topological spaces) satisfies the axioms, with witnesses provided
+        by reparameterizations (Sections 7&ndash;8).
+      </li>
+      <li>
+        <strong>Normalization succeeds for the free model.</strong>
+        The decidability result (Theorem 4.6) shows the free model has clean
+        normal forms. Missing coherences would make the free model "too free,"
+        distinguishing terms that should be identified.
+      </li>
+      <li>
+        <strong>Precedent: Mac Lane coherence.</strong>
+        For monoidal categories, finitely many conditions (pentagon + triangle)
+        generate all coherences. IC1&ndash;IC13 could play an analogous role.
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Slide 11: Reasons for Caution -->
+<div class="slide" id="slide-11">
+  <h2>Reasons for Caution</h2>
+  <div class="content">
+    <ul class="evidence-against">
+      <li>
+        <strong>Finite axioms, infinite tower.</strong>
+        It is not obvious that 13 axioms generate all higher coherences.
+        The pentagonator, and every level above it, must arise without
+        being explicitly axiomatized.
+      </li>
+      <li>
+        <strong>No bridge to standard models yet.</strong>
+        (&infin;,1)-categories are usually defined via horn-filling (quasicategories)
+        or limit conditions (Segal spaces) &mdash; very different from equational
+        axioms. No translation between EqCat&infin; and these frameworks exists.
+      </li>
+      <li>
+        <strong>Simpson's conjecture.</strong>
+        If true (every weak &infin;-category is semi-strict), it suggests the
+        coherence landscape is uneven &mdash; some axioms need weakening more
+        than others, complicating a uniform weak reading.
+      </li>
+      <li>
+        <strong>No algebraic comparison.</strong>
+        Batanin&ndash;Leinster algebraic weak &infin;-categories use globular operads.
+        Relating EqCat&infin; to these is an open problem in itself.
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Slide 12: Proof Strategy -->
+<div class="slide" id="slide-12">
+  <h2>Possible Proof Strategy</h2>
+  <div class="content">
+    <p>A proof of the completeness direction might proceed as follows:</p>
+    <div class="step-box">
+      <span class="step-label">Step 1.</span>
+      Given a weak model M of EqCat&infin; + invertibility, construct
+      from it a simplicial set (or other combinatorial object).
+    </div>
+    <div class="step-box">
+      <span class="step-label">Step 2.</span>
+      Show this simplicial set satisfies the inner horn-filling condition,
+      making it a quasicategory.
+    </div>
+    <div class="step-box">
+      <span class="step-label">Step 3.</span>
+      Show this construction is an equivalence: every quasicategory arises
+      (up to equivalence) from a weak model.
+    </div>
+    <p style="margin-top: 20px; color: #a0a0c0; font-style: italic;">
+      The hard part is Step 2: extracting horn-fillers from the equational
+      witnesses. The reparameterization mechanism (Section 7.4) suggests
+      how this might work in the homotopy model, but a general argument
+      is needed.
+    </p>
+  </div>
+</div>
+
+<!-- Slide 13: Summary of Conjecture 1 -->
+<div class="slide" id="slide-13">
+  <h2>Summary: Weak Adequacy Conjecture</h2>
+  <div class="content">
+    <div class="two-col">
+      <div class="col-for">
+        <div class="col-header">What we know</div>
+        <ul>
+          <li>IC1&ndash;IC13 characterize strict &omega;-categories (strong reading)</li>
+          <li>(&infin;,1)-categories satisfy IC1&ndash;IC13 weakly (soundness)</li>
+          <li>Equality in the free model is decidable</li>
+        </ul>
+      </div>
+      <div class="col-against">
+        <div class="col-header">What we don't know</div>
+        <ul>
+          <li>Whether weak models are necessarily (&infin;,1)-categories (completeness)</li>
+          <li>Whether the finite axioms generate the full coherence tower</li>
+          <li>How to bridge equational and horn-filling formulations</li>
+        </ul>
+      </div>
+    </div>
+    <p style="text-align: center; margin-top: 40px; font-size: 1.3em; color: #e94560;">
+      The Weak Adequacy Conjecture proposes that the answer to all three is yes.
+    </p>
+  </div>
+</div>
+
+<!-- Slide 14: Transition to Conjecture 2 -->
+<div class="slide" id="slide-14">
+  <h2>A Second Question: The Effective Topos</h2>
+  <div class="content">
+    <p>
+      The weak adequacy conjecture asks whether EqCat&infin; characterizes
+      <span class="highlight">(&infin;,1)-categories in general</span>.
+    </p>
+    <p style="margin-top: 20px;">
+      But there's a related question: can we find models of EqCat&infin; in
+      <span class="highlight">specific mathematical structures</span> beyond
+      topological spaces?
+    </p>
+    <p style="margin-top: 25px;">
+      One particularly interesting candidate is the <span class="green">effective topos</span> (Eff),
+      a fundamental construction in realizability theory and constructive mathematics.
+    </p>
+  </div>
+</div>
+
+<!-- Slide 15: What is Eff? -->
+<div class="slide" id="slide-15">
+  <h2>What Is the Effective Topos?</h2>
+  <div class="content">
+    <p>The <span class="highlight">effective topos</span> (Eff) is a topos constructed from:</p>
+    <ul>
+      <li><strong>Realizability:</strong> Objects are sets equipped with "realizability" structure from partial recursive functions</li>
+      <li><strong>Constructive logic:</strong> Internal logic is intuitionistic, not classical</li>
+      <li><strong>Computational content:</strong> Proofs carry algorithmic information</li>
+    </ul>
+    <p style="margin-top: 25px;">
+      Eff is a <span class="highlight">1-topos</span> &mdash; it has objects and morphisms with
+      good categorical structure (limits, colimits, exponentials). But it doesn't
+      inherently have higher-dimensional structure.
+    </p>
+    <p style="margin-top: 15px;">
+      <span class="green">Key property:</span> Eff is neither Set (classical sets) nor Top
+      (topological spaces), yet it's a rich mathematical universe with its own
+      internal logic.
+    </p>
+  </div>
+</div>
+
+<!-- Slide 16: The Eff Conjecture -->
+<div class="slide" id="slide-16">
+  <h2>Conjecture 2: Internal &infin;-Category in Eff</h2>
+  <div class="content">
+    <div class="conjecture-box">
+      <h3>Conjecture</h3>
+      <p>
+        There exists an <span class="highlight">internal &infin;-category</span> in the
+        effective topos Eff that validates the axioms of EqCat&infin; under the weak reading.
+      </p>
+      <p style="margin-top: 15px;">
+        More precisely: there is a model of EqCat&infin; whose underlying structure
+        lives internally in Eff, with cells at each dimension being objects of Eff,
+        and composition/identity operations being morphisms in Eff.
+      </p>
+    </div>
+    <p style="margin-top: 20px;">
+      This would show that equational &infin;-categorical reasoning is compatible
+      with <span class="green">realizability</span> and <span class="green">constructive mathematics</span>,
+      not just classical topology and homotopy theory.
+    </p>
+  </div>
+</div>
+
+<!-- Slide 17: Why This Matters -->
+<div class="slide" id="slide-17">
+  <h2>Why the Eff Conjecture Matters</h2>
+  <div class="content">
+    <ul class="evidence-for">
+      <li>
+        <strong>Bridges realizability and higher categories.</strong>
+        Eff embodies computational/constructive thinking. An &infin;-category
+        in Eff would mean higher-categorical reasoning has computational content.
+      </li>
+      <li>
+        <strong>Tests the generality of EqCat&infin;.</strong>
+        The axioms were designed for topological models. If they work in Eff,
+        they're more universal than initially apparent.
+      </li>
+      <li>
+        <strong>Potential for mechanization.</strong>
+        Eff's constructive nature aligns with proof assistants. A model in Eff
+        could lead to computational interpretations of &infin;-categorical proofs.
+      </li>
+      <li>
+        <strong>Connection to HoTT.</strong>
+        Homotopy Type Theory seeks to combine higher categories with type theory.
+        Realizability toposes like Eff provide constructive models of type theories,
+        suggesting potential bridges.
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Slide 18: Challenges for the Eff Conjecture -->
+<div class="slide" id="slide-18">
+  <h2>Challenges</h2>
+  <div class="content">
+    <ul class="evidence-against">
+      <li>
+        <strong>Eff is a 1-topos, not &infin;-topos.</strong>
+        There's no built-in higher structure. Would need to construct simplicial
+        objects or some other internal model of &infin;-categories.
+      </li>
+      <li>
+        <strong>The weak reading assumes topological homotopy.</strong>
+        The paper's weak semantics uses continuous maps I<sup>n</sup> &rarr; X.
+        Eff doesn't have this structure &mdash; need a different notion of "witness."
+      </li>
+      <li>
+        <strong>No obvious construction.</strong>
+        Unlike topological spaces (which naturally have homotopies), there's no
+        clear recipe for building cells and witnesses in Eff.
+      </li>
+      <li>
+        <strong>Eff doesn't model HoTT.</strong>
+        Eff doesn't satisfy univalence. If HoTT is the "right" internal language
+        for &infin;-categories, Eff might not have the necessary structure.
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Slide 19: Approaches to the Eff Conjecture -->
+<div class="slide" id="slide-19">
+  <h2>Possible Approaches</h2>
+  <div class="content">
+    <p>Several strategies could be attempted:</p>
+    <div class="step-box">
+      <span class="step-label">Approach 1: Simplicial objects.</span>
+      Construct the &infin;-category as a simplicial object internal to Eff.
+      Prove it satisfies Segal conditions and witnesses the EqCat&infin; axioms.
+    </div>
+    <div class="step-box">
+      <span class="step-label">Approach 2: Algebraic weak &infin;-categories.</span>
+      Use Batanin/Leinster's globular operads framework. Show Eff supports
+      the necessary operad structure.
+    </div>
+    <div class="step-box">
+      <span class="step-label">Approach 3: Realizability interpretation.</span>
+      Define cells as realizability structures. Witnesses are realized by
+      partial recursive functions. Composition is a computable operation.
+    </div>
+    <div class="step-box">
+      <span class="step-label">Approach 4: Bridge via strong reading.</span>
+      The free model (strong reading) is already computational. Perhaps
+      a realizability interpretation exists there, and the weak reading
+      emerges by internalizing the quotient in Eff.
+    </div>
+  </div>
+</div>
+
+<!-- Slide 20: Overall Summary -->
+<div class="slide" id="slide-20">
+  <h2>Two Conjectures, One Framework</h2>
+  <div class="content">
+    <div class="conjecture-box" style="margin-bottom: 25px;">
+      <h3>Conjecture 1: Weak Adequacy</h3>
+      <p>
+        Under the weak reading, EqCat&infin; + invertibility &ge; 2 characterizes
+        exactly the (&infin;,1)-categories.
+      </p>
+      <p style="margin-top: 8px; font-size: 0.95em; color: #a0a0c0;">
+        <em>Status:</em> Soundness largely proved. Completeness open.
+      </p>
+    </div>
+    <div class="conjecture-box">
+      <h3>Conjecture 2: Eff Model</h3>
+      <p>
+        There exists an internal &infin;-category in Eff validating EqCat&infin;.
+      </p>
+      <p style="margin-top: 8px; font-size: 0.95em; color: #a0a0c0;">
+        <em>Status:</em> Completely open. No construction known.
+      </p>
+    </div>
+    <p style="margin-top: 30px; text-align: center; font-size: 1.2em;">
+      Both conjectures test the <span class="green">scope and power</span> of
+      EqCat&infin; as a foundation for higher-categorical reasoning.
+    </p>
+  </div>
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+  <button id="prev-btn" onclick="prevSlide()" disabled>&larr; Previous</button>
+  <span class="slide-counter" id="counter">1 / 20</span>
+  <button id="next-btn" onclick="nextSlide()">Next &rarr;</button>
+</div>
+
+<script>
+  let current = 1;
+  const total = 20;
+
+  function showSlide(n) {
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    document.getElementById('slide-' + n).classList.add('active');
+    document.getElementById('counter').textContent = n + ' / ' + total;
+    document.getElementById('prev-btn').disabled = (n === 1);
+    document.getElementById('next-btn').disabled = (n === total);
+  }
+
+  function nextSlide() {
+    if (current < total) { current++; showSlide(current); }
+  }
+
+  function prevSlide() {
+    if (current > 1) { current--; showSlide(current); }
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+  });
+</script>
+
+</body>
+</html>
