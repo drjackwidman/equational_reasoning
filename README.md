@@ -44,6 +44,8 @@ In the free model, equality is decided by computing normal forms and comparing t
 
 ## Repository Structure
 
+- **`code/EqOmega/`** — the Agda formalization (Cubical Agda); see `FreeKernel.agda` below.
+- **`decidability/`** — a Rocq (Coq 8.15) formalization of the §4 decision procedure for equality in the **strict free model**, culminating in `free_cell_decidable` (Theorem 4.6). Build with `coq_makefile -f _CoqProject -o Makefile && make`. See [`decidability/README.md`](decidability/README.md) for build instructions and current proof status.
 
 ---
 
