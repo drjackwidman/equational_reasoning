@@ -8,7 +8,9 @@
       - [eq_cat_dim]     : x == y -> dim x = dim y
       - [eq_cat_dim_agree] : x == y -> wf x d1 -> wf y d2 -> d1 = d2
 
-    The last item discharges the [Admitted] in [FreeModel.v]. *)
+    The last item is what [FreeModel.v]'s [eq_cat_dim_agree] re-exports and
+    relies on (it would otherwise have to be [Admitted] there). All results in
+    this file are proved [Qed]. *)
 
 Require Import Arith Lia.
 Require Import Syntax Axioms.

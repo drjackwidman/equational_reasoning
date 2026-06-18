@@ -7,9 +7,11 @@
     a a generator, ℓ,m ≥ 0, and (when m = 0) the two end choices identified.
     We represent these as a record [NF] in CANONICAL form: whenever the
     end-count is 0 we force the end tag to [Es], so that structural equality
-    of records coincides with provable equality of the represented terms
-    (this is Lemma 4.2). Every smart constructor below preserves the
-    canonical-form invariant. *)
+    of records is INTENDED to coincide with provable equality of the
+    represented terms. The non-trivial direction of that coincidence is
+    Lemma 4.2 ([toTerm_inj]), which is currently [Admitted] in [Decidable.v];
+    it is NOT established in this file. Every smart constructor below provably
+    preserves the canonical-form invariant. *)
 
 Require Import Arith PeanoNat Lia Bool.
 Require Import Syntax Axioms.

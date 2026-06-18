@@ -2,16 +2,25 @@
     Decidability of provable equality in the strict free model (Theorem 4.6).
 
     Architecture (see header discussion in the development):
-      - [normalize_sound]    : normalize is sound w.r.t. == (independent of injectivity)
-      - [toTerm_inj]         : Lemma 4.2 — canonical normal forms are not == unless equal
-                               (the single deep lemma; confluence / semantic core)
-      - [normalize_total]    : normalize succeeds on wf terms (uses injectivity in comp case)
-      - [normalize_complete] : == implies equal normal forms (from the above three)
+      - [normalize_sound]    : normalize is sound w.r.t. ==          [ADMITTED]
+      - [toTerm_inj]         : Lemma 4.2 — canonical normal forms are
+                               not == unless equal (the deep lemma;
+                               confluence / semantic core)            [ADMITTED]
+      - [normalize_total]    : normalize succeeds on wf terms (uses injectivity
+                               in the comp case)
+      - [normalize_complete] : == implies equal normal forms (from the above)
       - [free_cell_decidable]: Theorem 4.6 (from completeness + soundness + totality)
 
-    Every result below is proved admit-free FROM [toTerm_inj] and the
-    Lemma-4.4 combinatorial step [nf_comp_glue]; those two carry the
-    irreducible content of §4. *)
+    PROOF STATUS. This file is NOT yet admit-free. Five lemmas below are
+    [Admitted] and carry the irreducible combinatorial / confluence content
+    of §4:
+      [toTerm_inj], [nf_comp_glue], [normalize_sound],
+      [src_pow_sound], [tgt_pow_sound].
+    Everything else here — including [normalize_total], [normalize_complete],
+    and [free_cell_decidable] — is proved [Qed], but those proofs are built
+    FROM the five admitted lemmas and therefore inherit them as assumptions.
+    So decidability is established only *modulo* those five lemmas;
+    [Print Assumptions free_cell_decidable] lists exactly them. *)
 
 Require Import Arith PeanoNat Lia Bool.
 Require Import Syntax Axioms Meta NormalForm FreeModel.
@@ -54,11 +63,14 @@ Qed.
 (** ** Commutation lemmas relating normalize-level [src_pow]/[tgt_pow]/[idext]
        to the term-level iterated operators. NF-only, no circularity. *)
 
-(** toTerm of an iterated-src normal form is provably the iterated src of toTerm. *)
+(** toTerm of an iterated-src normal form is provably the iterated src of toTerm.
+    [ADMITTED] — one of the five remaining lemmas (see file header). *)
 Lemma src_pow_sound : forall c u,
   nwf u -> c <= ndim u -> toTerm (src_pow c u) == iter_src c (toTerm u).
 Proof. Admitted.
 
+(** Symmetric to [src_pow_sound].
+    [ADMITTED] — one of the five remaining lemmas (see file header). *)
 Lemma tgt_pow_sound : forall c u,
   nwf u -> c <= ndim u -> toTerm (tgt_pow c u) == iter_tgt c (toTerm u).
 Proof. Admitted.
@@ -156,7 +168,8 @@ Proof.
     + replace (S (d - S c)) with (d - c) by lia. apply wf_iter_tgt; [exact Hy | lia].
 Qed.
 
-(** ** Soundness of the normalizer (independent of injectivity). *)
+(** ** Soundness of the normalizer (independent of injectivity).
+    [ADMITTED] — one of the five remaining lemmas (see file header). *)
 Theorem normalize_sound : forall t d u,
   wf t d -> normalize t = Some u -> toTerm u == t.
 Proof. Admitted.
@@ -164,7 +177,8 @@ Arguments normalize_sound {t d u}.
 
 (** ** Lemma 4.2 (injectivity of the normal-form interpretation).
     THE deep lemma: distinct canonical, well-formed normal forms denote
-    distinct cells of the free model. Equivalent to confluence of §4. *)
+    distinct cells of the free model. Equivalent to confluence of §4.
+    [ADMITTED] — one of the five remaining lemmas (see file header). *)
 Theorem toTerm_inj : forall u v,
   nwf u -> canonical u -> nwf v -> canonical v ->
   toTerm u == toTerm v -> u = v.
@@ -172,7 +186,8 @@ Proof. Admitted.
 
 (** ** Lemma 4.4 combinatorial step: from a matched boundary (as NF equality)
     the composite is degenerate and [nf_comp] succeeds with a well-formed,
-    canonical result that denotes the composite. *)
+    canonical result that denotes the composite.
+    [ADMITTED] — one of the five remaining lemmas (see file header). *)
 Lemma nf_comp_glue : forall k a b n u v,
   wf a n -> wf b n -> k < n ->
   normalize a = Some u -> normalize b = Some v ->
