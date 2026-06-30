@@ -3,10 +3,9 @@
 ## Where it stands: COMPLETE (admit-free)
 
 The whole development compiles under Rocq 8.15. The build chain (`_CoqProject`)
-is `Syntax → Axioms → Meta → NormalForm → FreeModel → Model → Decidable` (the old
-`Normalizer.v` is obsolete and not in the build). The headline theorem
-`free_cell_decidable` — decidability of provable equality in the strict free
-model — is **fully proved, with no `Admitted` and no extra axioms**.
+is `Syntax → Axioms → Meta → NormalForm → FreeModel → Model → Decidable`. The
+headline theorem `free_cell_decidable` — decidability of provable equality in the
+strict free model — is **fully proved, with no `Admitted` and no extra axioms**.
 
 `Print Assumptions free_cell_decidable` reports only the three intended abstract
 generator parameters (`Generator`, `gen_dim`, `Generator_eq_dec`) — i.e. the

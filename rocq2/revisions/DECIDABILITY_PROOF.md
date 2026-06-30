@@ -43,8 +43,7 @@ gaps. Anything else (an `Admitted`, or an extra `Axiom`) would be a regression.
 
 `Model.v` was **added** to the chain (between `FreeModel` and `Decidable`) so that
 `Decidable.v` can reuse its NF-level lemmas (`m_comp_boundary`, `NF_eqb_refl`,
-`NF_eqb_eq`, `idext_*_canonical`, …). `Normalizer.v` remains obsolete and is not in
-the build.
+`NF_eqb_eq`, `idext_*_canonical`, …).
 
 ## Score
 
