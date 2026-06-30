@@ -1,0 +1,51 @@
+\documentclass[11pt]{article}
+
+% Compile with LuaLaTeX (or XeLaTeX). pdfLaTeX cannot render the Unicode
+% characters (∞, ∘, §, en/em dashes, …) used in the .v file comments.
+
+\usepackage[margin=1in]{geometry}
+\usepackage{fontspec}
+\usepackage{minted}
+\usepackage{hyperref}
+
+% A monospace font with broad Unicode coverage (ships with TeX Live / Overleaf).
+\setmonofont{DejaVu Sans Mono}[Scale=0.85]
+
+\setminted[coq]{
+  fontsize=\small,
+  breaklines=true,
+  frame=single,
+  framesep=2mm,
+  linenos=false,
+  tabsize=2
+}
+
+\title{Formalization of EqCat$_\infty$ in Rocq}
+\author{Jack Widman}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Syntax}
+\inputminted{coq}{Syntax.v}
+
+\section{Axioms}
+\inputminted{coq}{Axioms.v}
+
+\section{Metatheory}
+\inputminted{coq}{Meta.v}
+
+\section{Normal Forms and the Normalizer}
+\inputminted{coq}{NormalForm.v}
+
+\section{Free Model (Strict Case)}
+\inputminted{coq}{FreeModel.v}
+
+\section{Semantic Model and Injectivity}
+\inputminted{coq}{Model.v}
+
+\section{Decidability}
+\inputminted{coq}{Decidable.v}
+
+\end{document}

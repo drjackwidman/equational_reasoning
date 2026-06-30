@@ -1,0 +1,166 @@
+================================================================================
+A COUNTEREXAMPLE TO LEMMA 4.4, CASE (b)
+("Bottom-up composition on normal forms",
+ Equational_Reasoning_in_∞-Categories.pdf, Appendix A, page 12,
+ line 1282 in the left margin / line 1340 in the right margin)
+================================================================================
+
+GOAL
+----
+Lemma 4.4 classifies the composite u ∘_{n-k} v of two normal forms and, in
+each case, says which operand the composite equals. Case (b) asserts the
+composite equals the LEFT operand u. We exhibit a concrete composite that
+satisfies every condition of case (b), yet whose true value is the RIGHT
+operand v. Hence the verdict "= u" on that line is false.
+
+
+--------------------------------------------------------------------------------
+0. NOTATION (as used in the paper)
+--------------------------------------------------------------------------------
+A normal form is an expression
+
+        idℓ endᵐ a
+
+where
+    a       is a primitive symbol (a generating cell),
+    end     is one of the unary operators src or tgt,
+    endᵐ    means "apply end m times" (lower dimension by m),
+    idℓ     means "apply id ℓ times"  (raise dimension by ℓ).
+
+Its dimension is
+        dim(idℓ endᵐ a) = dim a − m + ℓ.            ... (DIM)
+
+The two operands of the lemma are
+        u = idℓ end₁ᵐ a          (ℓ, m,  end₁ on symbol a)
+        v = idⁱ end₂ʲ b          (i, j,  end₂ on symbol b)
+and the composite considered is  u ∘_{n-k} v  with  dim u = dim v = n ≥ k.
+
+
+--------------------------------------------------------------------------------
+1. THE LEMMA'S CASE (b), VERBATIM
+--------------------------------------------------------------------------------
+    (b)  k ≤ ℓ  and  i < k  and  ℓ = k  and  end₁ = tgt  and  m = j + k − i ;
+         in this case   u ∘_{n-k} v = u.
+
+We will produce a composite that matches all five guards but for which
+u ∘_{n-k} v = v ≠ u.
+
+
+--------------------------------------------------------------------------------
+2. THE EXAMPLE: A VERTICAL UNIT LAW
+--------------------------------------------------------------------------------
+Pick a single primitive 2-cell
+
+        α : f ⇒ g          with   f, g : x → y   (1-cells),   dim α = 2.
+
+Let g be the target 1-cell of α, i.e.  g = tgt α, and let
+
+        id_g : g ⇒ g       be the identity 2-cell on g.
+
+Vertical composition of 2-cells is composition along their shared 1-cell,
+written ∘₁. The cells α : f ⇒ g and id_g : g ⇒ g share the 1-cell g, so the
+composite id_g ∘₁ α is defined and the UNIT LAW gives
+
+        id_g ∘₁ α = α.                              ... (UNIT)
+
+(This is the paper's own axiom IC12: composing a cell on the left with the
+identity on the cell's target boundary returns the cell. "Identity is a unit
+for composition.")
+
+
+--------------------------------------------------------------------------------
+3. WRITE BOTH OPERANDS AS NORMAL FORMS
+--------------------------------------------------------------------------------
+LEFT operand  u = id_g:
+        g    = tgt α          = tgt¹ α
+        id_g = id (tgt α)     = id¹ tgt¹ α
+    So, matching u = idℓ end₁ᵐ a :
+        ℓ = 1,  end₁ = tgt,  m = 1,  a = α.
+    Dimension, by (DIM):  dim u = dim α − m + ℓ = 2 − 1 + 1 = 2.   ✓ (a 2-cell)
+
+RIGHT operand  v = α:
+        α    = id⁰ (·)⁰ α     (no id's, no src/tgt applied)
+    So, matching v = idⁱ end₂ʲ b :
+        i = 0,  j = 0,  b = α.
+    Dimension, by (DIM):  dim v = dim α − 0 + 0 = 2.               ✓ (a 2-cell)
+
+The composition is along the shared 1-cell, ∘₁. The lemma writes the
+composition as ∘_{n-k} with n = dim u = dim v = 2, so
+        n − k = 1   ⟹   k = 1.                       ... (K)
+
+
+--------------------------------------------------------------------------------
+4. EVERY CASE-(b) CONDITION HOLDS
+--------------------------------------------------------------------------------
+Plug in   k = 1,  ℓ = 1,  i = 0,  j = 0,  m = 1,  end₁ = tgt,  a = b = α :
+
+    (b1)  a = b              :  α = α                       ✓
+    (b2)  k ≤ ℓ              :  1 ≤ 1                       ✓
+    (b3)  i < k              :  0 < 1                       ✓
+    (b4)  ℓ = k              :  1 = 1                       ✓
+    (b5)  end₁ = tgt         :  tgt = tgt                   ✓
+    (b6)  m = j + k − i      :  1 = 0 + 1 − 0 = 1           ✓
+
+All five guards are satisfied, so case (b) APPLIES, and its verdict is
+
+        id_g ∘₁ α  =  u  =  id_g.                   ... (LEMMA SAYS)
+
+
+--------------------------------------------------------------------------------
+5. THE CONTRADICTION
+--------------------------------------------------------------------------------
+From (UNIT):                 id_g ∘₁ α = α = v.
+From (LEMMA SAYS):           id_g ∘₁ α = id_g = u.
+
+Therefore the lemma forces
+
+        u = v,   i.e.   id_g = α.
+
+But id_g and α are NOT equal in the free model:
+    - their normal forms differ ( id¹ tgt¹ α   vs.   α ),
+    - and Lemma 4.2 (equality of normal forms) distinguishes them
+      ( different ℓ, different m );
+    - intuitively, id_g is a degenerate (identity) 2-cell while α is a
+      genuine generating 2-cell.
+
+So the verdict "= u" is false. The correct value is the RIGHT operand v = α.
+∎
+
+
+--------------------------------------------------------------------------------
+6. WHY THE PROOF REACHES THE WRONG ANSWER
+--------------------------------------------------------------------------------
+In the proof, this verdict comes from case (ii). After the boundary check is
+discharged, the argument rewrites the composite as
+
+        idℓ endᵐ a  ∘_{n-k}  idℓ endᵐ a
+
+— that is, it silently replaces BOTH operands by u — and then collapses it
+with rule R11 ( u ∘ u = u ), "the remainder as in case (i)."
+
+But in case (b) we have i < k = ℓ, which means u ≠ v: here u is precisely the
+identity extension of the boundary of v. The genuine reduction of
+"identity ∘ cell" is the CELL, namely v — not u. Replacing v by u before
+applying R11 is the unjustified step, and it is exactly what turns the answer
+from v into u.
+
+Case (a) is immune to this slip because its guard already requires u = v, so
+"= u" and "= v" coincide. The error only bites when the operands genuinely
+differ — i.e. cases (b) and (c). Case (c) is the mirror image: the right-unit
+law  α ∘₁ id_f = α  satisfies case (c) but evaluates to u, whereas case (c)
+returns v.
+
+
+--------------------------------------------------------------------------------
+7. THE FIX (decide by boundary, not by k ≤ ℓ)
+--------------------------------------------------------------------------------
+Choose the result by WHICH operand is the identity extension of the other's
+boundary, directly from the unit axioms:
+
+    - if v = id-extension of src^c(u)   (axiom IC11)   then  u ∘ v = u;
+    - if u = id-extension of tgt^c(v)   (axiom IC12)   then  u ∘ v = v;
+    - otherwise the composition is not typeable in the free model.
+
+In the example, u = id_g = id(tgt α) is the identity extension of tgt¹(v),
+so IC12 applies and u ∘ v = v = α — the correct answer.
+================================================================================

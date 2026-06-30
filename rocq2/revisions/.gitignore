@@ -1,0 +1,19 @@
+# Coq / Rocq build artifacts
+*.vo
+*.vok
+*.vos
+*.glob
+.*.aux
+.*.cache
+.lia.cache
+.Makefile.d
+.coqdeps.d
+# LaTeX build artifacts (PDF is committed deliberately)
+*.aux
+*.log
+*.out
+*.fls
+*.fdb_latexmk
+_minted-*/
+# Editor / local
+.claude/
