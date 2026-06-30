@@ -33,9 +33,9 @@ for f in Syntax Axioms Meta NormalForm FreeModel Model Decidable; do coqc -R . E
 echo 'Require Import EqCat.Decidable. Print Assumptions free_cell_decidable.' | coqtop -R . EqCat 2>/dev/null
 ```
 
-`Print Assumptions` lists the remaining holes. The three `Syntax.Generator*` /
-`Syntax.gen_dim` lines are the theory's intended abstract `Parameter`s, **not**
-gaps. Anything else is a real `Admitted`.
+`Print Assumptions` should now list **only** the three `Syntax.Generator*` /
+`Syntax.gen_dim` lines — the theory's intended abstract `Parameter`s, **not**
+gaps. Anything else (an `Admitted`, or an extra `Axiom`) would be a regression.
 
 ## Build chain (`_CoqProject`)
 
@@ -60,8 +60,8 @@ remaining `Model.v` admit, the IC10 case, is also closed).
 | `normalize_sound` | Decidable.v | ✅ proved (corollary of `normalize_total`) |
 | `interp_sound_mut` (IC10) | Model.v | ✅ proved (`ic10_l1`–`ic10_l5`) |
 
-`Print Assumptions free_cell_decidable` currently reports exactly
-`toTerm_inj` and `normalize_sound` (plus the `Generator*` parameters).
+`Print Assumptions free_cell_decidable` now reports only the three `Generator*` /
+`gen_dim` parameters — every lemma in the table above is `Qed`.
 
 ### What was done for the three closed lemmas
 
@@ -93,101 +93,45 @@ remaining `Model.v` admit, the IC10 case, is also closed).
   Verified that `Model.v`'s IC10 admit did **not** leak in (the reused lemmas are
   all `Qed` and independent of `interp_sound_mut`).
 
-## The two remaining holes
+## How the final two gaps were closed
 
-### 1. `toTerm_inj` (Lemma 4.2) — reduces to one IC10 case
+### `toTerm_inj` (Lemma 4.2)
 
-`toTerm_inj` is **already proved** in `Model.v` as `Model.toTerm_inj`. So
-`Decidable.toTerm_inj` can become `Proof. exact Model.toTerm_inj. Qed.` once the
-dependency below is closed.
+`Decidable.toTerm_inj` is `Proof. exact Model.toTerm_inj. Qed.` `Model.toTerm_inj`
+is proved in `Model.v` from the total semantic interpretation `interp : Term → NF`
+via `Model.interp_sound` / **`Model.interp_sound_mut`** (the combined `eq_cat`/`wf`
+mutual induction), which now ends `Qed`.
 
-`Model.toTerm_inj` → `Model.interp_sound` → **`Model.interp_sound_mut`**
-(`Model.v`, `Admitted`), which is complete **except one `all: admit`** in the
-**IC10 (exchange) case** (`Model.v:887`). The tower-normalization tactic there
-closes 59 of 64 leaves; the rest are the hard combinatorial residue.
+The last obstacle was a single `all: admit` in `interp_sound_mut`'s **IC10
+(exchange)** case: after the tower-normalization block closes 59 of 64 leaves, five
+residual leaves remain. They are NF-equalities between iterated identity-extension
+towers over an arbitrary canonical base `B` (`= interp x/y/z`, `ndim B = d`), with
+`cm := d-m`, `cn := d-n`. They are discharged by these additions to `Model.v`:
 
-#### IC10 endgame — work in progress (NOT yet landed)
+- `ndim_idext_src` / `ndim_idext_tgt` — `ndim (idext_* c u) = ndim u` when
+  `c ≤ ndim u` (the budget condition forces the no-truncation branch). These supply
+  the `ndim u = d` side-conditions of `m_comp_idsrc` / `m_comp_idtgt` for tower
+  operands.
+- `m_comp_junk` — the else-branch of `m_comp` returns its left operand, given that
+  the only way the left could be a target-unit of the right is if the two coincide.
+- leaf lemmas `ic10_l1`–`ic10_l5`, one per residual shape, each resolving its
+  `m_comp` via `m_comp_idsrc` / `m_comp_idtgt` plus a tower lemma
+  (`ov_ss` / `ov_ts` / definitional). They use the **boundary equations** to pick
+  the true unit pattern — *not* a blind `m_comp` value disjunction, which would
+  spawn unprovable spurious branches.
 
-A standalone reproduction of the IC10 case (`IC10_case`) is being developed in
-the scratch dir. Current scratch:
-`/tmp/claude-1000/-home-jackwidman-agda-projects-equational-reasoning-rocq2-revisions/414d89e8-c03d-4a0b-a84a-d966532b4366/scratchpad/ic10i.v`
-(iterations `ic10b..ic10i.v`).
+The IC10 closer is then
+`all: first [eapply ic10_l1 | … | eapply ic10_l5]`, followed by discharging the
+`canonical` / `ndim = d` / codim side-goals (re-run after `Unshelve`, since
+`eapply` shelves the `ndim` obligations). The `ndim` goals are closed by
+`apply interp_ndim; assumption` — the residual context has no bare
+`ndim (interp x) = d` hypothesis (it was consumed by the earlier rewrites).
 
-Findings / approach that works:
-- After the existing `gres` + `reflexivity`, each surviving leaf is a system of 6
-  identity-extension equations (e.g. `interp x = idext_tgt (d-n) (interp w)`, …)
-  whose conclusion is either an operand equality `interp p = interp q` or a
-  residual `m_comp` term.
-- The **original `rewrite H in *; clear H` block was destructive** — it discarded
-  the boundary equations that several leaves need, which is why those 5 looked
-  unprovable. The fix is to **not** clear, and resolve cleanly:
-  1. Resolve residual `m_comp`s while operands are still clean `interp` vars:
-     `m_comp k u u` via **`m_comp_diag`**; otherwise via a new lemma
-     **`m_comp_val`** : `canonical u → canonical v →
-     m_comp k u v = u ∨ (m_comp k u v = v ∧ u = idext_tgt (ndim u - k) v)`.
-  2. Normalize `ndim (interp _)` to `d` (single optional pass —
-     `rewrite ?HnX,?HnY,?HnZ,?HnW in *`; **note** a `repeat … in *` here
-     self-loops because it rewrites `HnX : ndim (interp x) = d` into `d = d`).
-  3. Each leaf then reduces to `interp p = interp q`, provable by oriented
-     rewriting with the hypotheses + **equal-codim cancellation**
-     (`idext_tgt c (idext_src c ·) = idext_src c ·`, etc.). Crucially the rewrite
-     **order matters** (the variable system is cyclic; only one order triggers the
-     cancellation), so the leaf solver must **backtrack** — a recursive
-     `multimatch` tactic `sleaf` with fuel.
-- New helper lemmas needed (proved in scratch, to be moved into `Model.v`):
-  - `idext_tgt_idext_src : idext_tgt c (idext_src c v) = idext_src c v`
-    (mirror of the existing `idext_src_idext_tgt`).
-  - `m_comp_val` (above).
-- **Pending next step:** the last scratch run failed only because `sleaf`'s
-  self-reference *guard* (`assert_fails (lazymatch …)`) mis-fires; with diagonal
-  `m_comp`s handled by `m_comp_diag` there are no self-referential hypotheses, so
-  the guard should simply be **dropped** and `sleaf` rerun. That edit was about to
-  be tested when work paused. Expected outcome: full `Qed` of `IC10_case`, then
-  port the tactic block into `Model.interp_sound_mut`'s IC10 case (replacing
-  `all: admit`).
+### `normalize_sound`
 
-Sketch of the closer to land in `Model.v` (after the existing `gres; try reflexivity`):
-```coq
-all: try (repeat match goal with
-            | [ |- context[m_comp ?k ?u ?u] ] => rewrite (m_comp_diag k u)
-            | [ |- context[m_comp ?k ?u ?v] ] =>
-                destruct (m_comp_val k u v ltac:(can) ltac:(can)) as [Hmv|[Hmv Hmq]];
-                rewrite Hmv; clear Hmv
-          end).
-all: rewrite ?HnX, ?HnY, ?HnZ, ?HnW in *.   (* single pass, not repeat *)
-all: try clear HnX HnY HnZ HnW.
-all: sleaf 8.
-```
-with
-```coq
-Ltac can := solve [ repeat (first [apply idext_src_canonical | apply idext_tgt_canonical]); apply interp_canonical ].
-Ltac twr := repeat (first [ rewrite idext_src_idem | rewrite idext_tgt_idem
-                          | rewrite idext_src_idext_tgt | rewrite idext_tgt_idext_src ]).
-Ltac sleaf n := twr;
-  first [ reflexivity
-        | lazymatch n with
-          | S ?n' => multimatch goal with
-                     | [ H : interp ?v = _ |- context[interp ?v] ] => rewrite H; sleaf n'
-                     end
-          end ].
-```
-(Note: the IC10 case currently keeps `HnX..HnW` via `pose proof (interp_ndim …)`.)
-
-### 2. `normalize_sound` — the deep one, untouched
-
-`normalize_sound : wf t d → normalize t = Some u → toTerm u == t`. To be proved by
-mutual induction over the combined `wf`/`eq_cat` judgment; hard cases IC9/IC10.
-Its dependencies (`toTerm_inj`, `nf_comp_glue`, `*_pow_sound`) are now all in
-place. **Strategic note:** `Model.interp_sound_mut` already *is* a soundness proof
-of the total interpretation `interp` by the very mutual induction this needs, with
-IC9/IC10 already worked out — so it may be far cheaper to prove `normalize_sound`
-by routing through `interp` (e.g. `normalize t = Some u → interp t = u`, plus
-`interp`/`toTerm` inversion) than to redo the IC9/IC10 induction from scratch.
-Decide this before diving in.
-
-## Housekeeping
-
-A stale duplicate build tree `./tmp/equational_reasoning/decidability/` (an old
-snapshot whose `.vo` files collided on the recursive `-R .` path and broke the
-build) was moved to the scratch dir
-(`…/scratchpad/tmp_stale_snapshot`). Restore or delete as desired.
+Eliminated rather than proved separately. `normalize_total`'s conclusion was
+strengthened to also carry the soundness conjunct `toTerm u == t`, proved by the
+*same* `wf` induction; the `comp` case takes the operand-soundness facts
+`Hsu`/`Hsv` from its induction hypotheses (not from a free-standing lemma), which
+removes the old circularity. `normalize_sound` is then a one-line corollary of
+`normalize_total`.

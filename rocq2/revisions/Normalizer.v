@@ -1,3 +1,13 @@
+(** * Normalizer.v — OBSOLETE / NOT IN THE BUILD.
+
+    This file is a superseded early sketch of the §4 decision procedure (a
+    fuel-bounded [nf_bounded] rewriter with [nf_*_step] stubs). It is NOT part
+    of the [_CoqProject] build chain and nothing depends on it. The complete,
+    admit-free decision procedure lives in [NormalForm.v] (the [normalize]
+    function and smart constructors), [Model.v] (semantic injectivity), and
+    [Decidable.v] (Theorem 4.6, [free_cell_decidable]). Retained only as a
+    historical artifact; safe to delete. *)
+
 Require Import Arith PeanoNat Lia List Bool.
 Require Import Syntax Axioms FreeModel.
 
