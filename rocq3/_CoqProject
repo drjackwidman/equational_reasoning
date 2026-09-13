@@ -1,0 +1,11 @@
+-R . EqCat
+Syntax.v
+Axioms.v
+Meta.v
+NormalForm.v
+Model.v
+FreeModel.v
+Decidable.v
+Reflect.v
+Adequacy.v
+Examples.v
