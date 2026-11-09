@@ -1,0 +1,439 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>EqCat.Examples</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library EqCat.Examples</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a id="lab79"></a><h1 class="section">Examples.v</h1>
+
+    The recurring obligations, each closed by one tactic call.
+
+<div class="paragraph"> </div>
+
+    The blurb names four kinds of obligation:
+      (1) boundary matching,
+      (2) repeated source and target simplification,
+      (3) identity propagation,
+      (4) equality of closed terms in the free setting.
+    Below, one section per kind, on a small concrete generating set.
+    Every goal is closed by <span class="inlinecode"><span class="id" title="var">eqcat_wf</span></span>, <span class="inlinecode"><span class="id" title="var">eqcat_decide</span></span> or <span class="inlinecode"><span class="id" title="var">eqcat_refute</span></span>,
+    except the two ill-formedness checks, which are closed by computation. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="EqCat.Syntax.html#"><span class="id" title="library">Syntax</span></a> <a class="idref" href="EqCat.Adequacy.html#"><span class="id" title="library">Adequacy</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab80"></a><h2 class="section">The generating data: a stratified set with one cell in each of</h2>
+
+    dimensions 0..3. Boundaries of generators are fresh (the free model
+    assumes no compatibilities between generators, cf. §4 of the paper). 
+</div>
+<div class="code">
+<span class="id" title="keyword">Module</span> <a id="Gen" class="idref" href="#Gen"><span class="id" title="module">Gen</span></a> &lt;: <a class="idref" href="EqCat.Syntax.html#GEN"><span class="id" title="module">GEN</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Inductive</span> <a id="Gen.G" class="idref" href="#Gen.G"><span class="id" title="inductive">G</span></a> := <a id="Gen.x" class="idref" href="#Gen.x"><span class="id" title="constructor">x</span></a> | <a id="Gen.f" class="idref" href="#Gen.f"><span class="id" title="constructor">f</span></a> | <a id="Gen.alpha" class="idref" href="#Gen.alpha"><span class="id" title="constructor">alpha</span></a> | <a id="Gen.beta" class="idref" href="#Gen.beta"><span class="id" title="constructor">beta</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="Gen.Generator" class="idref" href="#Gen.Generator"><span class="id" title="definition">Generator</span></a> := <a class="idref" href="EqCat.Examples.html#Gen.G"><span class="id" title="inductive">G</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="Gen.gen_dim" class="idref" href="#Gen.gen_dim"><span class="id" title="definition">gen_dim</span></a> (<a id="g:3" class="idref" href="#g:3"><span class="id" title="binder">g</span></a> : <a class="idref" href="EqCat.Examples.html#Gen.G"><span class="id" title="inductive">G</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="EqCat.Examples.html#g:3"><span class="id" title="variable">g</span></a> <span class="id" title="keyword">with</span> <a class="idref" href="EqCat.Examples.html#Gen.x"><span class="id" title="constructor">x</span></a> ⇒ 0 | <a class="idref" href="EqCat.Examples.html#Gen.f"><span class="id" title="constructor">f</span></a> ⇒ 1 | <a class="idref" href="EqCat.Examples.html#Gen.alpha"><span class="id" title="constructor">alpha</span></a> ⇒ 2 | <a class="idref" href="EqCat.Examples.html#Gen.beta"><span class="id" title="constructor">beta</span></a> ⇒ 3 <span class="id" title="keyword">end</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="Gen.Generator_eq_dec" class="idref" href="#Gen.Generator_eq_dec"><span class="id" title="definition">Generator_eq_dec</span></a> : <span class="id" title="keyword">∀</span> <a id="g1:5" class="idref" href="#g1:5"><span class="id" title="binder">g1</span></a> <a id="g2:6" class="idref" href="#g2:6"><span class="id" title="binder">g2</span></a> : <a class="idref" href="EqCat.Examples.html#Gen.Generator"><span class="id" title="definition">Generator</span></a>, <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Specif.html#87727981cdc1579fef00b9d9c1d3b9da"><span class="id" title="notation">{</span></a><a class="idref" href="EqCat.Examples.html#g1:5"><span class="id" title="variable">g1</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="EqCat.Examples.html#g2:6"><span class="id" title="variable">g2</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Specif.html#87727981cdc1579fef00b9d9c1d3b9da"><span class="id" title="notation">}</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Specif.html#87727981cdc1579fef00b9d9c1d3b9da"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Specif.html#87727981cdc1579fef00b9d9c1d3b9da"><span class="id" title="notation">{</span></a><a class="idref" href="EqCat.Examples.html#g1:5"><span class="id" title="variable">g1</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#::type_scope:x_'&lt;&gt;'_x"><span class="id" title="notation">≠</span></a> <a class="idref" href="EqCat.Examples.html#g2:6"><span class="id" title="variable">g2</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Specif.html#87727981cdc1579fef00b9d9c1d3b9da"><span class="id" title="notation">}</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="var">decide</span> <span class="id" title="var">equality</span>. <span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="EqCat.Examples.html#Gen"><span class="id" title="module">Gen</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a id="E" class="idref" href="#E"><span class="id" title="module">E</span></a> := <a class="idref" href="EqCat.Adequacy.html#AdequacyF"><span class="id" title="module">AdequacyF</span></a> <a class="idref" href="EqCat.Examples.html#Gen"><span class="id" title="module">Gen</span></a>.<br/>
+<span class="id" title="keyword">Import</span> <a class="idref" href="EqCat.Examples.html#E"><span class="id" title="module">E</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a id="x" class="idref" href="#x"><span class="id" title="abbreviation">x</span></a>     := (<a class="idref" href="EqCat.Examples.html#gen"><span class="id" title="constructor">gen</span></a> <a class="idref" href="EqCat.Examples.html#x"><span class="id" title="constructor">Gen.x</span></a>).<br/>
+<span class="id" title="keyword">Notation</span> <a id="f" class="idref" href="#f"><span class="id" title="abbreviation">f</span></a>     := (<a class="idref" href="EqCat.Examples.html#gen"><span class="id" title="constructor">gen</span></a> <a class="idref" href="EqCat.Examples.html#f"><span class="id" title="constructor">Gen.f</span></a>).<br/>
+<span class="id" title="keyword">Notation</span> <a id="alpha" class="idref" href="#alpha"><span class="id" title="abbreviation">alpha</span></a> := (<a class="idref" href="EqCat.Examples.html#gen"><span class="id" title="constructor">gen</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="constructor">Gen.alpha</span></a>).<br/>
+<span class="id" title="keyword">Notation</span> <a id="beta" class="idref" href="#beta"><span class="id" title="abbreviation">beta</span></a>  := (<a class="idref" href="EqCat.Examples.html#gen"><span class="id" title="constructor">gen</span></a> <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="constructor">Gen.beta</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<hr/>
+ <a id="lab81"></a><h2 class="section">(1) Boundary matching.</h2>
+
+    Well-formedness of a composite requires  src^{n-k} a == tgt^{n-k} b.
+    <span class="inlinecode"><span class="id" title="keyword">wf</span></span> is a <span class="inlinecode"><span class="id" title="keyword">Prop</span></span> with an <span class="inlinecode"><span class="id" title="var">eq_cat</span></span> premise; <span class="inlinecode"><span class="id" title="var">eqcat_wf</span></span> discharges it
+    by normalizing both boundaries. 
+<div class="paragraph"> </div>
+
+ Vertical unit composite on a 2-cell: id</i>{tgt α} ∘₁ α. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="bm_unit2" class="idref" href="#bm_unit2"><span class="id" title="definition">bm_unit2</span></a> : <a class="idref" href="EqCat.Examples.html#wf"><span class="id" title="inductive">wf</span></a> (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>) 2.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_wf</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A 3-cell against a doubly-identity-extended boundary, along ∘₁.
+    The check must simplify  src² (id² tgt² β)  down to  tgt² β. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="bm_codim2" class="idref" href="#bm_codim2"><span class="id" title="definition">bm_codim2</span></a> : <a class="idref" href="EqCat.Examples.html#wf"><span class="id" title="inductive">wf</span></a> (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="abbreviation">beta</span></a>)))) <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="abbreviation">beta</span></a>) 3.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_wf</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Along ∘₀: three identities, three sources. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="bm_codim3" class="idref" href="#bm_codim3"><span class="id" title="definition">bm_codim3</span></a> : <a class="idref" href="EqCat.Examples.html#wf"><span class="id" title="inductive">wf</span></a> (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 0 <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="abbreviation">beta</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="abbreviation">beta</span></a>))))))) 3.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_wf</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A nested composite: both inner and outer boundaries are checked. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="bm_nested" class="idref" href="#bm_nested"><span class="id" title="definition">bm_nested</span></a> :<br/>
+&nbsp;&nbsp;<a class="idref" href="EqCat.Examples.html#wf"><span class="id" title="inductive">wf</span></a> (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>) (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>))) 2.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_wf</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Ill-formed: a generator against itself. In the free model
+    src α ≠ tgt α, so α ∘₁ α does not exist. The checker returns <span class="inlinecode"><span class="id" title="var">None</span></span>. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="bm_fail" class="idref" href="#bm_fail"><span class="id" title="definition">bm_fail</span></a> : <a class="idref" href="EqCat.Examples.html#wfb"><span class="id" title="definition">wfb</span></a> (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="keyword">vm_compute</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Ill-formed: dimension mismatch. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="bm_fail_dim" class="idref" href="#bm_fail_dim"><span class="id" title="definition">bm_fail_dim</span></a> : <a class="idref" href="EqCat.Examples.html#wfb"><span class="id" title="definition">wfb</span></a> (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 0 <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> <a class="idref" href="EqCat.Examples.html#f"><span class="id" title="abbreviation">f</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="keyword">vm_compute</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<hr/>
+ <a id="lab82"></a><h2 class="section">(2) Repeated source and target simplification.</h2>
+
+    Chains of src/tgt/id collapse to a single end-block (rules R6–R9,
+    axioms IC1–IC4). 
+<div class="paragraph"> </div>
+
+ Globularity: src src = src tgt, tgt src = tgt tgt. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="st_glob1" class="idref" href="#st_glob1"><span class="id" title="definition">st_glob1</span></a> : <a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="abbreviation">beta</span></a>) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="abbreviation">beta</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="st_glob2" class="idref" href="#st_glob2"><span class="id" title="definition">st_glob2</span></a> : <a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="abbreviation">beta</span></a>)) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="abbreviation">beta</span></a>)).<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Mixed chains reduce to a pure src- or tgt-block. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="st_mixed" class="idref" href="#st_mixed"><span class="id" title="definition">st_mixed</span></a> : <a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="abbreviation">beta</span></a>)) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="abbreviation">beta</span></a>)).<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+src/tgt strip identities. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="st_strip" class="idref" href="#st_strip"><span class="id" title="definition">st_strip</span></a> : <a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>))) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+src of a composite is src of the right operand (IC5). 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="st_comp" class="idref" href="#st_comp"><span class="id" title="definition">st_comp</span></a> : <a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+src of a ∘₀-composite of 2-cells distributes (IC7), then collapses. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="st_distrib" class="idref" href="#st_distrib"><span class="id" title="definition">st_distrib</span></a> :<br/>
+&nbsp;&nbsp;<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 0 <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>))))) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Not equal: the two 0-cell boundaries of a 2-cell differ. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="st_neq" class="idref" href="#st_neq"><span class="id" title="definition">st_neq</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">¬</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">(</span></a><a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)<a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">)</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_refute</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<hr/>
+ <a id="lab83"></a><h2 class="section">(3) Identity propagation.</h2>
+
+    Unit laws (IC11/IC12), id of a composite (IC13), ids through
+    src/tgt (IC3/IC4). 
+<div class="paragraph"> </div>
+
+ Left and right unit laws for vertical composition. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="id_lunit" class="idref" href="#id_lunit"><span class="id" title="definition">id_lunit</span></a> : <a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="id_runit" class="idref" href="#id_runit"><span class="id" title="definition">id_runit</span></a> : <a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Unit laws at codimension 2 (horizontal composition of 2-cells). 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="id_lunit0" class="idref" href="#id_lunit0"><span class="id" title="definition">id_lunit0</span></a> : <a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 0 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)))) <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="id_runit0" class="idref" href="#id_runit0"><span class="id" title="definition">id_runit0</span></a> : <a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 0 <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)))) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+id distributes over composition (IC13). 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="id_comp" class="idref" href="#id_comp"><span class="id" title="definition">id_comp</span></a> :<br/>
+&nbsp;&nbsp;<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>))) (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Identity cells are absorbed on both sides at once. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="id_both" class="idref" href="#id_both"><span class="id" title="definition">id_both</span></a> :<br/>
+&nbsp;&nbsp;<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>))) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Iterated identities on a 0-cell compose to themselves. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="id_iter" class="idref" href="#id_iter"><span class="id" title="definition">id_iter</span></a> : <a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 0 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> <a class="idref" href="EqCat.Examples.html#x"><span class="id" title="abbreviation">x</span></a>)) (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> <a class="idref" href="EqCat.Examples.html#x"><span class="id" title="abbreviation">x</span></a>)) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> <a class="idref" href="EqCat.Examples.html#x"><span class="id" title="abbreviation">x</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<hr/>
+ <a id="lab84"></a><h2 class="section">(4) Equality of closed terms in the free setting.</h2>
+
+    Larger terms mixing all of the above. 
+<div class="paragraph"> </div>
+
+ Example 4.3 from the paper, with dim a = 3:
+      u = id² tgt² a,  v = id² tgt src a,  E = (id² tgt² (u ∘₁ v)) ∘₁ u,
+    and NF(E) = u. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a id="u" class="idref" href="#u"><span class="id" title="definition">u</span></a> := <a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="abbreviation">beta</span></a>))).<br/>
+<span class="id" title="keyword">Definition</span> <a id="v" class="idref" href="#v"><span class="id" title="definition">v</span></a> := <a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#beta"><span class="id" title="abbreviation">beta</span></a>))).<br/>
+<span class="id" title="keyword">Definition</span> <a id="Ex43" class="idref" href="#Ex43"><span class="id" title="definition">Ex43</span></a> := <a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 <a class="idref" href="EqCat.Examples.html#u"><span class="id" title="definition">u</span></a> <a class="idref" href="EqCat.Examples.html#v"><span class="id" title="definition">v</span></a>))))) <a class="idref" href="EqCat.Examples.html#u"><span class="id" title="definition">u</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="paper_4_3" class="idref" href="#paper_4_3"><span class="id" title="definition">paper_4_3</span></a> : <a class="idref" href="EqCat.Examples.html#Ex43"><span class="id" title="definition">Ex43</span></a> <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#u"><span class="id" title="definition">u</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="paper_4_3_wf" class="idref" href="#paper_4_3_wf"><span class="id" title="definition">paper_4_3_wf</span></a> : <a class="idref" href="EqCat.Examples.html#wf"><span class="id" title="inductive">wf</span></a> <a class="idref" href="EqCat.Examples.html#Ex43"><span class="id" title="definition">Ex43</span></a> 3.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_wf</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Associativity instance (IC9) with identity operands. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="assoc" class="idref" href="#assoc"><span class="id" title="definition">assoc</span></a> :<br/>
+&nbsp;&nbsp;<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>) (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>))<br/>
+&nbsp;&nbsp;<a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>))).<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Exchange instance (IC10) between ∘₀ and ∘₁ on 2-cells:
+      (x ∘₁ y) ∘₀ (z ∘₁ w) == (x ∘₀ z) ∘₁ (y ∘₀ w)
+    with x = α, y = id src α, z = w = id² src² α. Both sides reduce to α. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a id="z" class="idref" href="#z"><span class="id" title="definition">z</span></a> := <a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>))).<br/>
+<span class="id" title="keyword">Example</span> <a id="exchange" class="idref" href="#exchange"><span class="id" title="definition">exchange</span></a> :<br/>
+&nbsp;&nbsp;<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 0 (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>))) (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 <a class="idref" href="EqCat.Examples.html#z"><span class="id" title="definition">z</span></a> <a class="idref" href="EqCat.Examples.html#z"><span class="id" title="definition">z</span></a>)<br/>
+&nbsp;&nbsp;<a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 0 <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> <a class="idref" href="EqCat.Examples.html#z"><span class="id" title="definition">z</span></a>) (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 0 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) <a class="idref" href="EqCat.Examples.html#z"><span class="id" title="definition">z</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Both sides of the exchange are well-formed 2-cells. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="exchange_wf_l" class="idref" href="#exchange_wf_l"><span class="id" title="definition">exchange_wf_l</span></a> : <a class="idref" href="EqCat.Examples.html#wf"><span class="id" title="inductive">wf</span></a> (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 0 (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>))) (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 <a class="idref" href="EqCat.Examples.html#z"><span class="id" title="definition">z</span></a> <a class="idref" href="EqCat.Examples.html#z"><span class="id" title="definition">z</span></a>)) 2.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_wf</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="exchange_wf_r" class="idref" href="#exchange_wf_r"><span class="id" title="definition">exchange_wf_r</span></a> : <a class="idref" href="EqCat.Examples.html#wf"><span class="id" title="inductive">wf</span></a> (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 0 <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> <a class="idref" href="EqCat.Examples.html#z"><span class="id" title="definition">z</span></a>) (<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 0 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#src"><span class="id" title="constructor">src</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) <a class="idref" href="EqCat.Examples.html#z"><span class="id" title="definition">z</span></a>)) 2.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_wf</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Refutation: a genuine generator is not its own identity extension. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="neq_id" class="idref" href="#neq_id"><span class="id" title="definition">neq_id</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">¬</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">(</span></a><a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">)</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_refute</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The Lemma 4.4 counterexample from <span class="inlinecode"><span class="id" title="var">lemma_4_4_counterexample.txt</span></span>:
+    the paper's case (b) would return the LEFT operand id_g; the correct
+    value is the RIGHT operand α, and the two are distinct. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="lemma44_correct_value" class="idref" href="#lemma44_correct_value"><span class="id" title="definition">lemma44_correct_value</span></a> : <a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="lemma44_wrong_value" class="idref" href="#lemma44_wrong_value"><span class="id" title="definition">lemma44_wrong_value</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">¬</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">(</span></a><a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a> <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)<a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">)</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_refute</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<hr/>
+ <a id="lab85"></a><h2 class="section">At the level of the free model: <span class="inlinecode"><span class="id" title="var">FreeCell</span></span> equality.</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="c1" class="idref" href="#c1"><span class="id" title="definition">c1</span></a> : <a class="idref" href="EqCat.Examples.html#FreeCell"><span class="id" title="record">FreeCell</span></a> := <span class="id" title="keyword">ltac</span>:(<span class="id" title="var">mkcell</span> <span class="id" title="keyword">constr</span>:(<a class="idref" href="EqCat.Examples.html#comp"><span class="id" title="constructor">comp</span></a> 1 (<a class="idref" href="EqCat.Examples.html#id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.Examples.html#tgt"><span class="id" title="constructor">tgt</span></a> <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>)) <a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>) <span class="id" title="keyword">constr</span>:(2)).<br/>
+<span class="id" title="keyword">Definition</span> <a id="c2" class="idref" href="#c2"><span class="id" title="definition">c2</span></a> : <a class="idref" href="EqCat.Examples.html#FreeCell"><span class="id" title="record">FreeCell</span></a> := <span class="id" title="keyword">ltac</span>:(<span class="id" title="var">mkcell</span> <span class="id" title="keyword">constr</span>:(<a class="idref" href="EqCat.Examples.html#alpha"><span class="id" title="abbreviation">alpha</span></a>) <span class="id" title="keyword">constr</span>:(2)).<br/>
+
+<br/>
+<span class="id" title="keyword">Example</span> <a id="freecell_eq" class="idref" href="#freecell_eq"><span class="id" title="definition">freecell_eq</span></a> : <a class="idref" href="EqCat.Examples.html#c1"><span class="id" title="definition">c1</span></a> <a class="idref" href="EqCat.FreeModel.html#bba78ff0996c9ffd73a41334c8c3b2ea"><span class="id" title="notation">===</span></a> <a class="idref" href="EqCat.Examples.html#c2"><span class="id" title="definition">c2</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="var">eqcat_decide</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And the original sumbool decision, evaluated: it picks <span class="inlinecode"><span class="id" title="tactic">left</span></span>. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Example</span> <a id="freecell_dec_left" class="idref" href="#freecell_dec_left"><span class="id" title="definition">freecell_dec_left</span></a> :<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">(</span></a><span class="id" title="keyword">if</span> <a class="idref" href="EqCat.Examples.html#free_cell_decidable"><span class="id" title="lemma">free_cell_decidable</span></a> <a class="idref" href="EqCat.Examples.html#c1"><span class="id" title="definition">c1</span></a> <a class="idref" href="EqCat.Examples.html#c2"><span class="id" title="definition">c2</span></a> <span class="id" title="keyword">then</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <span class="id" title="keyword">else</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="keyword">vm_compute</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<hr/>
+ <a id="lab86"></a><h2 class="section">Audit. Everything above is closed under the global context: the</h2>
+
+    only parameters were the generators, and they are now concrete. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Print</span> <span class="id" title="keyword">Assumptions</span> <a class="idref" href="EqCat.Examples.html#paper_4_3"><span class="id" title="definition">paper_4_3</span></a>.<br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="keyword">Assumptions</span> <a class="idref" href="EqCat.Examples.html#exchange"><span class="id" title="definition">exchange</span></a>.<br/>
+<span class="id" title="keyword">Print</span> <span class="id" title="keyword">Assumptions</span> <a class="idref" href="EqCat.Examples.html#freecell_eq"><span class="id" title="definition">freecell_eq</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The free model on this generating set satisfies all laws of Figure 2, closed. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Print</span> <span class="id" title="keyword">Assumptions</span> <a class="idref" href="EqCat.Examples.html#FreeModel_is_EqCat_model"><span class="id" title="lemma">FreeModel_is_EqCat_model</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

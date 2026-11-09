@@ -9,3 +9,5 @@ Decidable.v
 Reflect.v
 Adequacy.v
 Examples.v
+Presented.v
+EckmannHilton.v
