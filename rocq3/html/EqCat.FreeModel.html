@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>EqCat.FreeModel</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library EqCat.FreeModel</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a id="lab50"></a><h1 class="section">FreeModel.v</h1>
+
+    Formalization of the Free Model in the Strict Case for EqCat∞.
+    Reference: "Equational Reasoning in ∞-Categories"
+
+<div class="paragraph"> </div>
+
+    In the strict case, the free model is constructed by quotienting 
+    the well-formed raw terms by the provable equational theory <span class="inlinecode"><span class="id" title="var">eq_cat</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Arith.Arith.html#"><span class="id" title="library">Arith</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.micromega.Lia.html#"><span class="id" title="library">Lia</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Setoids.Setoid.html#"><span class="id" title="library">Setoid</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Classes.Morphisms.html#"><span class="id" title="library">Morphisms</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="EqCat.Syntax.html#"><span class="id" title="library">Syntax</span></a> <a class="idref" href="EqCat.Axioms.html#"><span class="id" title="library">Axioms</span></a> <a class="idref" href="EqCat.Meta.html#"><span class="id" title="library">Meta</span></a> <a class="idref" href="EqCat.NormalForm.html#"><span class="id" title="library">NormalForm</span></a> <a class="idref" href="EqCat.Model.html#"><span class="id" title="library">Model</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a id="FreeModelF" class="idref" href="#FreeModelF"><span class="id" title="module">FreeModelF</span></a> (<span class="id" title="var">G</span> : <a class="idref" href="EqCat.Syntax.html#GEN"><span class="id" title="module">GEN</span></a>).<br/>
+<span class="id" title="keyword">Include</span> <a class="idref" href="EqCat.Model.html#ModelF"><span class="id" title="module">ModelF</span></a> <a class="idref" href="EqCat.FreeModel.html#G"><span class="id" title="module">G</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab51"></a><h2 class="section">1. Definitional Structure of Free Cells</h2>
+
+
+<div class="paragraph"> </div>
+
+    A cell in the free model bundles a raw <span class="inlinecode"><span class="id" title="var">Term</span></span>, an explicit dimension <span class="inlinecode"><span class="id" title="var">n</span></span>, 
+    and a structural proof of the new inductive <span class="inlinecode"><span class="id" title="keyword">wf</span></span> predicate at that dimension. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Record</span> <a id="FreeModelF.FreeCell" class="idref" href="#FreeModelF.FreeCell"><span class="id" title="record">FreeCell</span></a> : <span class="id" title="keyword">Type</span> := {<br/>
+&nbsp;&nbsp;<a id="FreeModelF.cell_term" class="idref" href="#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.Term"><span class="id" title="inductive">Term</span></a>;<br/>
+&nbsp;&nbsp;<a id="FreeModelF.cell_dim" class="idref" href="#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a>  : <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>;<br/>
+&nbsp;&nbsp;<a id="FreeModelF.cell_proof" class="idref" href="#FreeModelF.cell_proof"><span class="id" title="projection">cell_proof</span></a> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.wf"><span class="id" title="inductive">wf</span></a> <a class="idref" href="EqCat.FreeModel.html#cell_term:2"><span class="id" title="method">cell_term</span></a> <a class="idref" href="EqCat.FreeModel.html#cell_dim:3"><span class="id" title="method">cell_dim</span></a><br/>
+}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab52"></a><h2 class="section">2. Equivalence Relation on FreeCell</h2>
+
+
+<div class="paragraph"> </div>
+
+    Two cells are equivalent if their underlying raw terms are provably equal 
+    under the revised <span class="inlinecode"><span class="id" title="var">eq_cat</span></span> relation (notation <span class="inlinecode">==</span>). 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="FreeModelF.FreeCell_eq" class="idref" href="#FreeModelF.FreeCell_eq"><span class="id" title="definition">FreeCell_eq</span></a> (<a id="c1:5" class="idref" href="#c1:5"><span class="id" title="binder">c1</span></a> <a id="c2:6" class="idref" href="#c2:6"><span class="id" title="binder">c2</span></a> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell"><span class="id" title="record">FreeCell</span></a>) : <span class="id" title="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> <a class="idref" href="EqCat.FreeModel.html#c1:5"><span class="id" title="variable">c1</span></a> <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> <a class="idref" href="EqCat.FreeModel.html#c2:6"><span class="id" title="variable">c2</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Infix</span> <a id="bba78ff0996c9ffd73a41334c8c3b2ea" class="idref" href="#bba78ff0996c9ffd73a41334c8c3b2ea"><span class="id" title="notation">&quot;</span></a>===" := <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq"><span class="id" title="definition">FreeCell_eq</span></a> (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 70, <span class="id" title="keyword">no</span> <span class="id" title="keyword">associativity</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We establish that <span class="inlinecode"><span class="id" title="var">FreeCell_eq</span></span> is an equivalence relation using the 
+    revised structural axioms <span class="inlinecode"><span class="id" title="var">E1_refl</span></span>, <span class="inlinecode"><span class="id" title="var">E2_sym</span></span>, and <span class="inlinecode"><span class="id" title="var">E3_trans</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="FreeModelF.FreeCell_eq_refl" class="idref" href="#FreeModelF.FreeCell_eq_refl"><span class="id" title="lemma">FreeCell_eq_refl</span></a> : <span class="id" title="keyword">∀</span> <a id="c:7" class="idref" href="#c:7"><span class="id" title="binder">c</span></a>, <a class="idref" href="EqCat.FreeModel.html#c:7"><span class="id" title="variable">c</span></a> <a class="idref" href="EqCat.FreeModel.html#bba78ff0996c9ffd73a41334c8c3b2ea"><span class="id" title="notation">===</span></a> <a class="idref" href="EqCat.FreeModel.html#c:7"><span class="id" title="variable">c</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">t</span> <span class="id" title="var">d</span> <span class="id" title="var">p</span>]; <span class="id" title="tactic">exact</span> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.E1_refl"><span class="id" title="constructor">E1_refl</span></a> <span class="id" title="var">t</span>).<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="FreeModelF.FreeCell_eq_sym" class="idref" href="#FreeModelF.FreeCell_eq_sym"><span class="id" title="lemma">FreeCell_eq_sym</span></a> : <span class="id" title="keyword">∀</span> <a id="c1:8" class="idref" href="#c1:8"><span class="id" title="binder">c1</span></a> <a id="c2:9" class="idref" href="#c2:9"><span class="id" title="binder">c2</span></a>, <a class="idref" href="EqCat.FreeModel.html#c1:8"><span class="id" title="variable">c1</span></a> <a class="idref" href="EqCat.FreeModel.html#bba78ff0996c9ffd73a41334c8c3b2ea"><span class="id" title="notation">===</span></a> <a class="idref" href="EqCat.FreeModel.html#c2:9"><span class="id" title="variable">c2</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="EqCat.FreeModel.html#c2:9"><span class="id" title="variable">c2</span></a> <a class="idref" href="EqCat.FreeModel.html#bba78ff0996c9ffd73a41334c8c3b2ea"><span class="id" title="notation">===</span></a> <a class="idref" href="EqCat.FreeModel.html#c1:8"><span class="id" title="variable">c1</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">t1</span> <span class="id" title="var">d1</span> <span class="id" title="var">p1</span>] [<span class="id" title="var">t2</span> <span class="id" title="var">d2</span> <span class="id" title="var">p2</span>] <span class="id" title="var">H</span>; <span class="id" title="tactic">exact</span> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.E2_sym"><span class="id" title="constructor">E2_sym</span></a> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">H</span>).<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="FreeModelF.FreeCell_eq_trans" class="idref" href="#FreeModelF.FreeCell_eq_trans"><span class="id" title="lemma">FreeCell_eq_trans</span></a> : <span class="id" title="keyword">∀</span> <a id="c1:10" class="idref" href="#c1:10"><span class="id" title="binder">c1</span></a> <a id="c2:11" class="idref" href="#c2:11"><span class="id" title="binder">c2</span></a> <a id="c3:12" class="idref" href="#c3:12"><span class="id" title="binder">c3</span></a>, <a class="idref" href="EqCat.FreeModel.html#c1:10"><span class="id" title="variable">c1</span></a> <a class="idref" href="EqCat.FreeModel.html#bba78ff0996c9ffd73a41334c8c3b2ea"><span class="id" title="notation">===</span></a> <a class="idref" href="EqCat.FreeModel.html#c2:11"><span class="id" title="variable">c2</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="EqCat.FreeModel.html#c2:11"><span class="id" title="variable">c2</span></a> <a class="idref" href="EqCat.FreeModel.html#bba78ff0996c9ffd73a41334c8c3b2ea"><span class="id" title="notation">===</span></a> <a class="idref" href="EqCat.FreeModel.html#c3:12"><span class="id" title="variable">c3</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">→</span></a> <a class="idref" href="EqCat.FreeModel.html#c1:10"><span class="id" title="variable">c1</span></a> <a class="idref" href="EqCat.FreeModel.html#bba78ff0996c9ffd73a41334c8c3b2ea"><span class="id" title="notation">===</span></a> <a class="idref" href="EqCat.FreeModel.html#c3:12"><span class="id" title="variable">c3</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">t1</span> <span class="id" title="var">d1</span> <span class="id" title="var">p1</span>] [<span class="id" title="var">t2</span> <span class="id" title="var">d2</span> <span class="id" title="var">p2</span>] [<span class="id" title="var">t3</span> <span class="id" title="var">d3</span> <span class="id" title="var">p3</span>] <span class="id" title="var">H1</span> <span class="id" title="var">H2</span>; <span class="id" title="tactic">exact</span> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.E3_trans"><span class="id" title="constructor">E3_trans</span></a> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">t3</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span>).<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Register <span class="inlinecode"><span class="id" title="var">FreeCell</span></span> as a Setoid to unlock rewriting automation within Rocq. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Add</span> <span class="id" title="var">Parametric</span> <span class="id" title="var">Relation</span> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell"><span class="id" title="record">FreeCell</span></a> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq"><span class="id" title="definition">FreeCell_eq</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span> <span class="id" title="var">proved</span> <span class="id" title="tactic">by</span> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq_refl"><span class="id" title="lemma">FreeCell_eq_refl</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="tactic">symmetry</span> <span class="id" title="var">proved</span> <span class="id" title="tactic">by</span> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq_sym"><span class="id" title="lemma">FreeCell_eq_sym</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="tactic">transitivity</span> <span class="id" title="var">proved</span> <span class="id" title="tactic">by</span> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq_trans"><span class="id" title="lemma">FreeCell_eq_trans</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">as</span> <span class="id" title="var">FreeCell_setoid</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab53"></a><h2 class="section">3. Operational Signatures on the Quotient</h2>
+
+
+<div class="paragraph"> </div>
+
+    We lift <span class="inlinecode"><span class="id" title="var">src</span></span>, <span class="inlinecode"><span class="id" title="var">tgt</span></span>, and <span class="inlinecode"><span class="id" title="var">id</span></span> to map over <span class="inlinecode"><span class="id" title="var">FreeCell</span></span>. 
+    For 0-cells, totalization maps the cell to itself to preserve typing constraints. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="FreeModelF.Free_src" class="idref" href="#FreeModelF.Free_src"><span class="id" title="definition">Free_src</span></a> (<a id="c:13" class="idref" href="#c:13"><span class="id" title="binder">c</span></a> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell"><span class="id" title="record">FreeCell</span></a>) : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell"><span class="id" title="record">FreeCell</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">c</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">t</span> <span class="id" title="var">d</span> <span class="id" title="var">p</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">d</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> {| <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> := <span class="id" title="var">t</span>; <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> := 0; <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_proof"><span class="id" title="projection">cell_proof</span></a> := <span class="id" title="var">p</span> |}.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> {| <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> := <a class="idref" href="EqCat.FreeModel.html#FreeModelF.src"><span class="id" title="constructor">src</span></a> <span class="id" title="var">t</span>; <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> := <span class="id" title="var">d</span>; <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_proof"><span class="id" title="projection">cell_proof</span></a> := <a class="idref" href="EqCat.FreeModel.html#FreeModelF.wf_src"><span class="id" title="constructor">wf_src</span></a> <span class="id" title="var">t</span> <span class="id" title="var">d</span> <span class="id" title="var">p</span> |}.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="FreeModelF.Free_tgt" class="idref" href="#FreeModelF.Free_tgt"><span class="id" title="definition">Free_tgt</span></a> (<a id="c:14" class="idref" href="#c:14"><span class="id" title="binder">c</span></a> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell"><span class="id" title="record">FreeCell</span></a>) : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell"><span class="id" title="record">FreeCell</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">c</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">t</span> <span class="id" title="var">d</span> <span class="id" title="var">p</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">d</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> {| <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> := <span class="id" title="var">t</span>; <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> := 0; <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_proof"><span class="id" title="projection">cell_proof</span></a> := <span class="id" title="var">p</span> |}.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> {| <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> := <a class="idref" href="EqCat.FreeModel.html#FreeModelF.tgt"><span class="id" title="constructor">tgt</span></a> <span class="id" title="var">t</span>; <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> := <span class="id" title="var">d</span>; <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_proof"><span class="id" title="projection">cell_proof</span></a> := <a class="idref" href="EqCat.FreeModel.html#FreeModelF.wf_tgt"><span class="id" title="constructor">wf_tgt</span></a> <span class="id" title="var">t</span> <span class="id" title="var">d</span> <span class="id" title="var">p</span> |}.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="FreeModelF.Free_id" class="idref" href="#FreeModelF.Free_id"><span class="id" title="definition">Free_id</span></a> (<a id="c:15" class="idref" href="#c:15"><span class="id" title="binder">c</span></a> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell"><span class="id" title="record">FreeCell</span></a>) : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell"><span class="id" title="record">FreeCell</span></a> :=<br/>
+&nbsp;&nbsp;{| <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> := <a class="idref" href="EqCat.FreeModel.html#FreeModelF.id"><span class="id" title="constructor">id</span></a> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> <a class="idref" href="EqCat.FreeModel.html#c:15"><span class="id" title="variable">c</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a>  := <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> <a class="idref" href="EqCat.FreeModel.html#c:15"><span class="id" title="variable">c</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_proof"><span class="id" title="projection">cell_proof</span></a> := <a class="idref" href="EqCat.FreeModel.html#FreeModelF.wf_id"><span class="id" title="constructor">wf_id</span></a> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> <a class="idref" href="EqCat.FreeModel.html#c:15"><span class="id" title="variable">c</span></a>) (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> <a class="idref" href="EqCat.FreeModel.html#c:15"><span class="id" title="variable">c</span></a>) (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_proof"><span class="id" title="projection">cell_proof</span></a> <a class="idref" href="EqCat.FreeModel.html#c:15"><span class="id" title="variable">c</span></a>) |}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab54"></a><h2 class="section">4. Metatheoretical Dimension Invariance Lemma</h2>
+
+
+<div class="paragraph"> </div>
+
+    We assert that provable equality preserves the inductive typing dimensions. 
+    This acts as our translation bridge for dependent types.  <span class="inlinecode"><span class="id" title="var">eq_cat_dim_agree</span></span> is inherited from the <span class="inlinecode"><span class="id" title="var">Meta</span></span> stage. 
+<div class="paragraph"> </div>
+
+<a id="lab55"></a><h2 class="section">5. Morphism Adequacy Proofs</h2>
+
+
+<div class="paragraph"> </div>
+
+    We declare parametric morphisms to guarantee that the structural 
+    operators cleanly respect the Setoid equivalence relation. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Add</span> <span class="id" title="var">Parametric</span> <span class="id" title="var">Morphism</span> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.Free_src"><span class="id" title="definition">Free_src</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">with</span> <span class="id" title="var">signature</span> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq"><span class="id" title="definition">FreeCell_eq</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq"><span class="id" title="definition">FreeCell_eq</span></a> <span class="id" title="keyword">as</span> <span class="id" title="var">Free_src_morph</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">t1</span> <span class="id" title="var">d1</span> <span class="id" title="var">p1</span>] [<span class="id" title="var">t2</span> <span class="id" title="var">d2</span> <span class="id" title="var">p2</span>] <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq"><span class="id" title="definition">FreeCell_eq</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hdim</span>: <span class="id" title="var">d1</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">d2</span>) <span class="id" title="tactic">by</span> <span class="id" title="tactic">exact</span> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.eq_cat_dim_agree"><span class="id" title="lemma">eq_cat_dim_agree</span></a> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">d1</span> <span class="id" title="var">d2</span> <span class="id" title="var">Heq</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">subst</span> <span class="id" title="var">d2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">d1</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.E5_src"><span class="id" title="constructor">E5_src</span></a> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">d1</span> <span class="id" title="var">Heq</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span>).<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Add</span> <span class="id" title="var">Parametric</span> <span class="id" title="var">Morphism</span> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.Free_tgt"><span class="id" title="definition">Free_tgt</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">with</span> <span class="id" title="var">signature</span> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq"><span class="id" title="definition">FreeCell_eq</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq"><span class="id" title="definition">FreeCell_eq</span></a> <span class="id" title="keyword">as</span> <span class="id" title="var">Free_tgt_morph</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">t1</span> <span class="id" title="var">d1</span> <span class="id" title="var">p1</span>] [<span class="id" title="var">t2</span> <span class="id" title="var">d2</span> <span class="id" title="var">p2</span>] <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq"><span class="id" title="definition">FreeCell_eq</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hdim</span>: <span class="id" title="var">d1</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">d2</span>) <span class="id" title="tactic">by</span> <span class="id" title="tactic">exact</span> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.eq_cat_dim_agree"><span class="id" title="lemma">eq_cat_dim_agree</span></a> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">d1</span> <span class="id" title="var">d2</span> <span class="id" title="var">Heq</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">subst</span> <span class="id" title="var">d2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">d1</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.E6_tgt"><span class="id" title="constructor">E6_tgt</span></a> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">d1</span> <span class="id" title="var">Heq</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span>).<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Add</span> <span class="id" title="var">Parametric</span> <span class="id" title="var">Morphism</span> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.Free_id"><span class="id" title="definition">Free_id</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">with</span> <span class="id" title="var">signature</span> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq"><span class="id" title="definition">FreeCell_eq</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell_eq"><span class="id" title="definition">FreeCell_eq</span></a> <span class="id" title="keyword">as</span> <span class="id" title="var">Free_id_morph</span>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">t1</span> <span class="id" title="var">d1</span> <span class="id" title="var">p1</span>] [<span class="id" title="var">t2</span> <span class="id" title="var">d2</span> <span class="id" title="var">p2</span>] <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.E8_id"><span class="id" title="constructor">E8_id</span></a> <span class="id" title="var">t1</span> <span class="id" title="var">t2</span> <span class="id" title="var">Heq</span>).<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a id="lab56"></a><h2 class="section">6. Composition under the Mutual Architecture</h2>
+
+
+<div class="paragraph"> </div>
+
+    To compose <span class="inlinecode"><span class="id" title="var">b</span></span> and <span class="inlinecode"><span class="id" title="var">a</span></span> along dimension <span class="inlinecode"><span class="id" title="var">k</span></span> inside our strict free model, 
+    the boundaries must cleanly match. In the revised framework, this proof 
+    is embedded directly into the <span class="inlinecode"><span class="id" title="var">wf_comp</span></span> constructor of the typing relation. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="FreeModelF.Free_comp" class="idref" href="#FreeModelF.Free_comp"><span class="id" title="definition">Free_comp</span></a> (<a id="k:16" class="idref" href="#k:16"><span class="id" title="binder">k</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) (<a id="b:17" class="idref" href="#b:17"><span class="id" title="binder">b</span></a> <a id="a:18" class="idref" href="#a:18"><span class="id" title="binder">a</span></a> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell"><span class="id" title="record">FreeCell</span></a>)<br/>
+&nbsp;&nbsp;(<a id="Hdim:19" class="idref" href="#Hdim:19"><span class="id" title="binder">Hdim</span></a> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> <a class="idref" href="EqCat.FreeModel.html#a:18"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> <a class="idref" href="EqCat.FreeModel.html#b:17"><span class="id" title="variable">b</span></a>)<br/>
+&nbsp;&nbsp;(<a id="Hk:20" class="idref" href="#Hk:20"><span class="id" title="binder">Hk</span></a> : <a class="idref" href="EqCat.FreeModel.html#k:16"><span class="id" title="variable">k</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Peano.html#::nat_scope:x_'&lt;'_x"><span class="id" title="notation">&lt;</span></a> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> <a class="idref" href="EqCat.FreeModel.html#a:18"><span class="id" title="variable">a</span></a>)<br/>
+&nbsp;&nbsp;(<a id="Hglue:21" class="idref" href="#Hglue:21"><span class="id" title="binder">Hglue</span></a> : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.iter_src"><span class="id" title="definition">iter_src</span></a> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> <a class="idref" href="EqCat.FreeModel.html#a:18"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Peano.html#::nat_scope:x_'-'_x"><span class="id" title="notation">-</span></a> <a class="idref" href="EqCat.FreeModel.html#k:16"><span class="id" title="variable">k</span></a>) (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> <a class="idref" href="EqCat.FreeModel.html#a:18"><span class="id" title="variable">a</span></a>) <a class="idref" href="EqCat.Axioms.html#961efb0dc3b4ca52fb00984495e591a7"><span class="id" title="notation">==</span></a> <a class="idref" href="EqCat.FreeModel.html#FreeModelF.iter_tgt"><span class="id" title="definition">iter_tgt</span></a> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> <a class="idref" href="EqCat.FreeModel.html#a:18"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Peano.html#::nat_scope:x_'-'_x"><span class="id" title="notation">-</span></a> <a class="idref" href="EqCat.FreeModel.html#k:16"><span class="id" title="variable">k</span></a>) (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> <a class="idref" href="EqCat.FreeModel.html#b:17"><span class="id" title="variable">b</span></a>)) : <a class="idref" href="EqCat.FreeModel.html#FreeModelF.FreeCell"><span class="id" title="record">FreeCell</span></a> :=<br/>
+&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;{| <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> := <a class="idref" href="EqCat.FreeModel.html#FreeModelF.comp"><span class="id" title="constructor">comp</span></a> <a class="idref" href="EqCat.FreeModel.html#k:16"><span class="id" title="variable">k</span></a> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> <a class="idref" href="EqCat.FreeModel.html#a:18"><span class="id" title="variable">a</span></a>) (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> <a class="idref" href="EqCat.FreeModel.html#b:17"><span class="id" title="variable">b</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a>  := <a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> <a class="idref" href="EqCat.FreeModel.html#a:18"><span class="id" title="variable">a</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_proof"><span class="id" title="projection">cell_proof</span></a> := <a class="idref" href="EqCat.FreeModel.html#FreeModelF.wf_comp"><span class="id" title="constructor">wf_comp</span></a> <a class="idref" href="EqCat.FreeModel.html#k:16"><span class="id" title="variable">k</span></a> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> <a class="idref" href="EqCat.FreeModel.html#a:18"><span class="id" title="variable">a</span></a>) (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> <a class="idref" href="EqCat.FreeModel.html#b:17"><span class="id" title="variable">b</span></a>) (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_dim"><span class="id" title="projection">cell_dim</span></a> <a class="idref" href="EqCat.FreeModel.html#a:18"><span class="id" title="variable">a</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_proof"><span class="id" title="projection">cell_proof</span></a> <a class="idref" href="EqCat.FreeModel.html#a:18"><span class="id" title="variable">a</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/V8.15.0/stdlib//Coq.Init.Logic.html#eq_rect_r"><span class="id" title="definition">eq_rect_r</span></a> (<span class="id" title="keyword">fun</span> <a id="d:22" class="idref" href="#d:22"><span class="id" title="binder">d</span></a> ⇒ <a class="idref" href="EqCat.FreeModel.html#FreeModelF.wf"><span class="id" title="inductive">wf</span></a> (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_term"><span class="id" title="projection">cell_term</span></a> <a class="idref" href="EqCat.FreeModel.html#b:17"><span class="id" title="variable">b</span></a>) <a class="idref" href="EqCat.FreeModel.html#d:22"><span class="id" title="variable">d</span></a>) (<a class="idref" href="EqCat.FreeModel.html#FreeModelF.cell_proof"><span class="id" title="projection">cell_proof</span></a> <a class="idref" href="EqCat.FreeModel.html#b:17"><span class="id" title="variable">b</span></a>) <a class="idref" href="EqCat.FreeModel.html#Hdim:19"><span class="id" title="variable">Hdim</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="EqCat.FreeModel.html#Hk:20"><span class="id" title="variable">Hk</span></a> <a class="idref" href="EqCat.FreeModel.html#Hglue:21"><span class="id" title="variable">Hglue</span></a> |}.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="EqCat.FreeModel.html#FreeModelF"><span class="id" title="module">FreeModelF</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
