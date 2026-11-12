@@ -954,7 +954,7 @@ Proof.
       rewrite (m_comp_idtgt n d (interp x) (interp z) HnX
                  (interp_canonical _) (interp_canonical _) HX).
       reflexivity.
-  - (* IC10 exchange *) intros x y z w m n d Hwf1 IH1 Hwf2 IH2.
+  - (* IC10 exchange *) intros x y z w m n d Hwf1 IH1 Hwf2 IH2 _.
     apply wf_comp_inv in Hwf1. destruct Hwf1 as (Hxy & Hzw & Hm & _).
     apply wf_comp_inv in Hxy. destruct Hxy as (Hx & Hy & _ & _).
     apply wf_comp_inv in Hzw. destruct Hzw as (Hz & Hw & _ & _).

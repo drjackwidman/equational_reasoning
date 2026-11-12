@@ -102,8 +102,9 @@ Record IsEqCatModel (Sg : OmegaSig) : Prop := {
       ceq (ccomp k (ccomp k a b Hab1 Hab2 Hab3) c Hl1 Hl2 Hl3)
           (ccomp k a (ccomp k b c Hbc1 Hbc2 Hbc3) Hr1 Hr2 Hr3);
 
-  (* --- exchange (IC10) --- *)
+  (* --- exchange (IC10), between two distinct levels of composition --- *)
   exchange : forall (m : nat) (n : nat) (x : Cell Sg) (y : Cell Sg) (z : Cell Sg) (w : Cell Sg) Hxy1 Hxy2 Hxy3 Hzw1 Hzw2 Hzw3 HL1 HL2 HL3 Hxz1 Hxz2 Hxz3 Hyw1 Hyw2 Hyw3 HR1 HR2 HR3,
+      m <> n ->
       ceq (ccomp m (ccomp n x y Hxy1 Hxy2 Hxy3) (ccomp n z w Hzw1 Hzw2 Hzw3) HL1 HL2 HL3)
           (ccomp n (ccomp m x z Hxz1 Hxz2 Hxz3) (ccomp m y w Hyw1 Hyw2 Hyw3) HR1 HR2 HR3);
 

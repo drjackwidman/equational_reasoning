@@ -229,13 +229,17 @@ with eq_cat : Term -> Term -> Prop :=
          comp m (comp n x y) (comp n z w) ==
          comp n (comp m x z) (comp m y w)
    CHANGED: same pattern as IC9 — [wf] of both sides bundles all
-   dimension, level, and boundary constraints (including [m <> n],
-   which is implicit in the well-formedness of the nested compositions
-   when the boundaries are checked). *)
+   dimension, level, and boundary constraints.
+   CORRECTED (Nov 2026): [m <> n] is NOT implied by well-formedness of the
+   two sides and is now an explicit premise, as in the paper's figure
+   ((m > n) \/ (n > m)). Without it, the m = n instance makes any two
+   loops on the same cell commute once generators may share boundaries;
+   see [exchange_same_level_commutes] in [Strict.v]. *)
 | IC10 :
     forall x y z w m n d,
       wf (comp m (comp n x y) (comp n z w)) d ->
       wf (comp n (comp m x z) (comp m y w)) d ->
+      m <> n ->
       comp m (comp n x y) (comp n z w) ==
       comp n (comp m x z) (comp m y w)
 

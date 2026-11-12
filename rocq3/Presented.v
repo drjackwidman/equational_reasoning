@@ -124,6 +124,7 @@ with eq_cat : Term -> Term -> Prop :=
     forall x y z w m n d,
       wf (comp m (comp n x y) (comp n z w)) d ->
       wf (comp n (comp m x z) (comp m y w)) d ->
+      m <> n ->
       comp m (comp n x y) (comp n z w) ==
       comp n (comp m x z) (comp m y w)
 | IC11 :

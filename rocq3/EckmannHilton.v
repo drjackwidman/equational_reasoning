@@ -343,7 +343,7 @@ Proof.
     - apply W_exL; assumption. }
   (* exchange *)
   tr (comp 0 (comp 1 p u) (comp 1 u q)).
-  { apply (IC10 p u u q 1 0 2); [apply W_exL | apply W_exR]; assumption. }
+  { apply (IC10 p u u q 1 0 2); [apply W_exL; assumption | apply W_exR; assumption | discriminate]. }
   (* remove units *)
   apply (E7_comp _ _ _ _ 0 2); [apply UR1, Lp | apply UL1, Lq | |].
   - apply W_exR; assumption.
@@ -359,7 +359,7 @@ Proof.
     - apply W1_pq; assumption.
     - apply W_exL'; assumption. }
   tr (comp 0 (comp 1 u q) (comp 1 p u)).
-  { apply (IC10 u p q u 1 0 2); [apply W_exL' | apply W_exR']; assumption. }
+  { apply (IC10 u p q u 1 0 2); [apply W_exL'; assumption | apply W_exR'; assumption | discriminate]. }
   apply (E7_comp _ _ _ _ 0 2); [apply UL1, Lq | apply UR1, Lp | |].
   - apply W_exR'; assumption.
   - apply W0_pq; assumption.
