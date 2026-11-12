@@ -1,5 +1,5 @@
 # Build the EqCat development (Coq 8.15).
-FILES = Syntax Axioms Meta NormalForm Model FreeModel Decidable Reflect Adequacy Examples Presented EckmannHilton Derived Functor Inverse ModelLemmas Strict Universal
+FILES = Syntax Axioms Meta NormalForm Model FreeModel Decidable Reflect Adequacy Examples Presented EckmannHilton Derived Functor Inverse ModelLemmas Strict Universal WordProblem
 all: $(FILES:=.vo)
 %.vo: %.v
 	coqc -q -R . EqCat $<
@@ -20,6 +20,7 @@ Inverse.vo: Functor.vo
 ModelLemmas.vo: Functor.vo
 Strict.vo: ModelLemmas.vo
 Universal.vo: Strict.vo
+WordProblem.vo: Universal.vo
 audit: Examples.vo
 	@grep -n "^[[:space:]]*Admitted\.\|^[[:space:]]*admit\." *.v || echo "no admits"
 # coqdoc pages that the paper's \rocq{File}{Anchor} links point to.

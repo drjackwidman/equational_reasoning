@@ -17,3 +17,4 @@ Inverse.v
 ModelLemmas.v
 Strict.v
 Universal.v
+WordProblem.v
