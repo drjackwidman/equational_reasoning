@@ -82,6 +82,14 @@ the correct outcome.
 
 ## What is not mechanized
 
+> **Update, 12 Nov 2026.** Theorem 6.1 is now mechanized in `Strict.v`
+> (`adequacy`: `IsEqCatModel` is equivalent to `IsStrictOmegaCat`, both
+> directions). The exchange rule `IC10` and the `exchange` law of
+> `IsEqCatModel` now carry the paper's side condition m ≠ n; the theorem is
+> false without it. `Universal.v` adds interpretation in a model, soundness,
+> and the universal property of the free model. The first bullet below
+> describes the state before this update.
+
 - **Theorem 6.1 itself.** The record `IsEqCatModel` is Figure 2 transcribed.
   Theorem 6.1 says a model of Figure 2 is the same thing as a strict
   ω-category in the classical sense (each `C_k ⇉ C_ℓ` a category with

@@ -22,11 +22,12 @@
     partial composition and setoid equality so that it reads as a
     structure rather than a term relation.
 
-    What this is NOT: Theorem 6.1. That theorem compares this ℕ-indexed
-    presentation with the classical definition of strict ω-category
-    (each C_k ⇉ C_ℓ a category, each triple a strict 2-category, per
-    Appendix B). Neither direction of that comparison is mechanized.
-    See RESPONSE.md. *)
+    Theorem 6.1 of the paper compares this ℕ-indexed presentation with the
+    classical definition of strict ω-category (each C_k ⇉ C_ℓ a category,
+    each triple a strict 2-category). That comparison is in [Strict.v]:
+    [adequacy] proves [IsEqCatModel] equivalent to [IsStrictOmegaCat].
+    The [exchange] law below is stated between two distinct levels of
+    composition, as in the paper's figure; [Strict.v] shows why. *)
 
 Require Import Arith PeanoNat Lia Bool.
 Require Import Setoid Morphisms.

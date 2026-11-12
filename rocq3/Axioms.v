@@ -232,9 +232,11 @@ with eq_cat : Term -> Term -> Prop :=
    dimension, level, and boundary constraints.
    CORRECTED (Nov 2026): [m <> n] is NOT implied by well-formedness of the
    two sides and is now an explicit premise, as in the paper's figure
-   ((m > n) \/ (n > m)). Without it, the m = n instance makes any two
-   loops on the same cell commute once generators may share boundaries;
-   see [exchange_same_level_commutes] in [Strict.v]. *)
+   ((m > n) \/ (n > m)). The same law in a model, taken at m = n, makes
+   any two loops on the same cell commute
+   ([exchange_same_level_commutes] in [Strict.v], a statement about
+   models). So the unrestricted rule is not sound for strict
+   omega-categories. *)
 | IC10 :
     forall x y z w m n d,
       wf (comp m (comp n x y) (comp n z w)) d ->
