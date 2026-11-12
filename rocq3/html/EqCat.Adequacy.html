@@ -57,11 +57,12 @@
 
 <div class="paragraph"> </div>
 
-    What this is NOT: Theorem 6.1. That theorem compares this ℕ-indexed
-    presentation with the classical definition of strict ω-category
-    (each C_k ⇉ Cℓ a category, each triple a strict 2-category, per
-    Appendix B). Neither direction of that comparison is mechanized.
-    See RESPONSE.md. 
+    Theorem 6.1 of the paper compares this ℕ-indexed presentation with the
+    classical definition of strict ω-category (each C_k ⇉ Cℓ a category,
+    each triple a strict 2-category). That comparison is in <span class="inlinecode"><span class="id" title="var">Strict.v</span></span>:
+    <span class="inlinecode"><span class="id" title="var">adequacy</span></span> proves <span class="inlinecode"><span class="id" title="var">IsEqCatModel</span></span> equivalent to <span class="inlinecode"><span class="id" title="var">IsStrictOmegaCat</span></span>.
+    The <span class="inlinecode"><span class="id" title="var">exchange</span></span> law below is stated between two distinct levels of
+    composition, as in the paper's figure; <span class="inlinecode"><span class="id" title="var">Strict.v</span></span> shows why. 
 </div>
 <div class="code">
 
