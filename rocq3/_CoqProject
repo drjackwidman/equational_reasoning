@@ -14,3 +14,6 @@ EckmannHilton.v
 Derived.v
 Functor.v
 Inverse.v
+ModelLemmas.v
+Strict.v
+Universal.v
